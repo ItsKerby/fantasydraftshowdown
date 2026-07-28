@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fantasy Draft Showdown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #F1E6CF;
+    --paper-dark: #E7D8B6;
+    --ink: #2B211A;
+    --wood: #7A4A2B;
+    --wood-dark: #5C3620;
+    --mustard: #E8A93B;
+    --mustard-dark: #C98A20;
+    --pickle: #4E6E58;
+    --pickle-dark: #395243;
+    --tomato: #C13B2E;
+    --tomato-dark: #9A2C21;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+
+  body{
+    background:
+      radial-gradient(ellipse at top left, rgba(122,74,43,0.08), transparent 60%),
+      radial-gradient(ellipse at bottom right, rgba(78,110,88,0.08), transparent 60%),
+      var(--paper);
+    background-image:
+      radial-gradient(ellipse at top left, rgba(122,74,43,0.08), transparent 60%),
+      radial-gradient(ellipse at bottom right, rgba(78,110,88,0.08), transparent 60%),
+      repeating-linear-gradient(0deg, rgba(122,74,43,0.025) 0px, rgba(122,74,43,0.025) 1px, transparent 1px, transparent 3px);
+    color:var(--ink);
+    font-family:'Courier Prime', monospace;
+    min-height:100vh;
+    padding:24px 14px 60px;
+    display:flex;
+    justify-content:center;
+  }
+
+  .wrap{ width:100%; max-width:760px; }
+
+  /* ---------- Header ---------- */
+  header{ text-align:center; margin-bottom:22px; }
+  .eyebrow{
+    font-size:12px; letter-spacing:0.28em; text-transform:uppercase;
+    color:var(--wood); font-weight:700; margin-bottom:6px;
+  }
+  h1{
+    font-family:'Alfa Slab One', cursive;
+    font-size:clamp(28px, 6vw, 44px);
+    color:var(--tomato);
+    text-shadow: 2px 2px 0 var(--ink);
+    margin:0 0 6px;
+    letter-spacing:0.5px;
+    line-height:1.05;
+  }
+  .subhead{ font-size:14px; color:var(--wood-dark); }
+  .subhead b{ color:var(--ink); }
+
+  /* ---------- Sport select screen ---------- */
+  .sport-select{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:14px;
+  }
+  @media(max-width:560px){ .sport-select{ grid-template-columns:1fr; } }
+  .sport-card{
+    border:4px solid var(--wood-dark); border-radius:10px;
+    background:var(--paper-dark);
+    padding:20px 12px;
+    text-align:center;
+    cursor:pointer;
+    transition: transform 0.1s, box-shadow 0.1s, background 0.15s;
+  }
+  .sport-card:hover{ transform:translateY(-3px); box-shadow:0 4px 0 var(--wood-dark); background:var(--mustard); }
+  .sport-emoji{ font-size:40px; display:block; margin-bottom:8px; }
+  .sport-name{ font-family:'Alfa Slab One',cursive; font-size:16px; }
+  .sport-sub{ font-size:11px; color:var(--wood-dark); margin-top:4px; }
+  .select-hint{ text-align:center; font-size:12px; color:var(--wood-dark); margin-bottom:22px; }
+
+  /* ---------- Item board ---------- */
+  .board{
+    background: var(--pickle);
+    border:6px solid var(--wood-dark);
+    border-radius:10px;
+    padding:26px 20px;
+    text-align:center;
+    margin-bottom:20px;
+    position:relative;
+    box-shadow: inset 0 0 0 3px rgba(255,255,255,0.06), 0 6px 0 rgba(0,0,0,0.15);
+  }
+  .board::before{
+    content:"LOT " attr(data-lot);
+    position:absolute; top:10px; left:14px;
+    font-family:'Alfa Slab One',cursive;
+    font-size:12px; color:rgba(241,230,207,0.55); letter-spacing:0.15em;
+  }
+  .item-category{
+    font-size:11px; text-transform:uppercase; letter-spacing:0.25em;
+    color:rgba(241,230,207,0.75); margin-bottom:6px;
+  }
+  .item-emoji{ font-size:52px; display:block; margin-bottom:6px; filter:drop-shadow(0 3px 0 rgba(0,0,0,0.25)); }
+  .item-name{
+    font-family:'Alfa Slab One',cursive;
+    color:var(--paper);
+    font-size:clamp(20px,5vw,30px);
+    letter-spacing:0.5px;
+  }
+  .item-mystery{
+    margin-top:8px; font-size:11px; letter-spacing:0.1em; text-transform:uppercase;
+    color:rgba(241,230,207,0.65);
+  }
+
+  /* ---------- Stamp overlay ---------- */
+  .stamp-layer{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    pointer-events:none; opacity:0;
+  }
+  .stamp-layer.show{ opacity:1; }
+  .stamp{
+    font-family:'Alfa Slab One',cursive;
+    font-size:clamp(18px,4.4vw,26px);
+    color:var(--tomato);
+    border:5px solid var(--tomato);
+    border-radius:8px;
+    padding:10px 16px;
+    text-align:center;
+    background:rgba(241,230,207,0.94);
+    transform:rotate(-8deg) scale(0.4);
+    opacity:0;
+  }
+  .stamp.sold{ color:var(--pickle-dark); border-color:var(--pickle-dark); }
+  .stamp.animate{
+    animation: stampSlam 0.45s cubic-bezier(.2,1.4,.4,1) forwards;
+  }
+  @keyframes stampSlam{
+    0%{ transform:rotate(-8deg) scale(2.2); opacity:0; }
+    60%{ transform:rotate(-8deg) scale(0.92); opacity:1; }
+    100%{ transform:rotate(-8deg) scale(1); opacity:1; }
+  }
+  .stamp small{ display:block; font-family:'Courier Prime',monospace; font-size:12px; font-weight:700; margin-top:4px; letter-spacing:0.03em; }
+  .stamp .grade-badge{ display:inline-block; margin-top:6px; padding:2px 10px; border-radius:20px; font-size:12px; font-family:'Courier Prime',monospace; font-weight:700; }
+
+  /* ---------- Player panels ---------- */
+  .players{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px; }
+  @media(max-width:520px){ .players{ grid-template-columns:1fr; } }
+
+  .panel{
+    border:4px solid var(--wood-dark);
+    border-radius:10px;
+    padding:16px;
+    background:var(--paper-dark);
+    position:relative;
+    transition: box-shadow 0.2s;
+  }
+  .panel.p1{ box-shadow: 0 0 0 3px rgba(232,169,59,0.5) inset; }
+  .panel.p2{ box-shadow: 0 0 0 3px rgba(78,110,88,0.5) inset; }
+  .panel.broke{ opacity:0.55; }
+
+  .panel-head{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px; }
+  .pname{ font-family:'Alfa Slab One',cursive; font-size:16px; }
+  .p1 .pname{ color:var(--mustard-dark); }
+  .p2 .pname{ color:var(--pickle-dark); }
+  .balance{ font-size:13px; font-weight:700; }
+  .balance .amt{ font-size:17px; }
+  .team-score{ font-size:11px; color:var(--wood-dark); margin-bottom:10px; font-weight:700; }
+
+  .bid-row{ display:flex; gap:8px; }
+  .bid-input{
+    flex:1; min-width:0;
+    font-family:'Courier Prime', monospace;
+    font-weight:700; font-size:18px;
+    padding:10px 8px; text-align:center;
+    border:3px solid var(--wood); border-radius:6px;
+    background:var(--paper);
+    color:var(--ink);
+    -webkit-text-security: disc;
+  }
+  .bid-input:disabled{ background:#ddd0b0; color:#998a68; -webkit-text-security:none; }
+  .bid-input.revealed{ -webkit-text-security:none; }
+
+  .lock-btn{
+    font-family:'Alfa Slab One',cursive;
+    font-size:12px; letter-spacing:0.05em;
+    border:3px solid var(--wood-dark);
+    border-radius:6px;
+    padding:0 12px;
+    cursor:pointer;
+    background:var(--mustard);
+    color:var(--ink);
+    transition: transform 0.1s, background 0.15s;
+  }
+  .p2 .lock-btn{ background:var(--pickle); color:var(--paper); }
+  .lock-btn:hover{ transform:translateY(-1px); }
+  .lock-btn:disabled{ cursor:default; background:#bcae8c; color:#7a6f55; transform:none; }
+
+  .status-line{ margin-top:8px; font-size:11px; text-transform:uppercase; letter-spacing:0.12em; min-height:14px; color:var(--wood-dark); font-weight:700;}
+  .status-line.locked{ color:var(--tomato); }
+
+  .roster-chips{ display:flex; flex-wrap:wrap; gap:5px; margin-top:10px; }
+  .chip{
+    display:flex; align-items:center; gap:4px;
+    border:2px solid var(--wood); border-radius:5px;
+    background:var(--paper); padding:3px 6px;
+    font-size:10px; opacity:0.55;
+  }
+  .chip.filled{ opacity:1; border-color:var(--tomato); background:#fff8ea; }
+  .chip-slot{ font-family:'Alfa Slab One',cursive; font-size:9px; color:var(--wood-dark); }
+  .chip.filled .chip-slot{ color:var(--tomato); }
+  .chip-name{ font-weight:700; max-width:74px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .chip-grade{ font-weight:700; font-size:9px; padding:0 4px; border-radius:8px; }
+
+  /* ---------- Controls ---------- */
+  .controls{ text-align:center; margin-bottom:22px; }
+  .main-btn{
+    font-family:'Alfa Slab One',cursive;
+    font-size:16px; letter-spacing:0.05em;
+    color:var(--paper);
+    background:var(--tomato);
+    border:none; border-radius:8px;
+    padding:14px 30px;
+    cursor:pointer;
+    box-shadow: 0 4px 0 var(--tomato-dark);
+    transition: transform 0.08s, box-shadow 0.08s;
+  }
+  .main-btn:active{ transform:translateY(4px); box-shadow:0 0 0 var(--tomato-dark); }
+  .main-btn:disabled{
+    background:#c9bda0; box-shadow:0 4px 0 #a89a76; cursor:not-allowed; color:#8a7d5e;
+  }
+  .main-btn.ghost{ background:var(--wood); box-shadow:0 4px 0 var(--wood-dark); }
+  .hint{ font-size:12px; color:var(--wood-dark); margin-top:10px; }
+
+  /* ---------- History ticket ---------- */
+  .history-wrap{ margin-top:6px; }
+  .history-title{
+    font-family:'Alfa Slab One',cursive; font-size:12px; letter-spacing:0.15em;
+    color:var(--wood); text-transform:uppercase; margin-bottom:8px; text-align:center;
+  }
+  .history{
+    display:flex; flex-direction:column; gap:6px;
+    max-height:180px; overflow-y:auto;
+    padding:10px 12px;
+    background:var(--paper-dark);
+    border:3px dashed var(--wood);
+    border-radius:8px;
+  }
+  .history-row{ font-size:12px; display:flex; justify-content:space-between; gap:8px; }
+  .history-row .win{ font-weight:700; }
+  .history-row.unsold{ color:var(--wood-dark); font-style:italic; }
+  .history-empty{ font-size:12px; text-align:center; color:var(--wood-dark); font-style:italic; }
+
+  /* ---------- End screen ---------- */
+  .end-card{
+    text-align:center; padding:28px 18px;
+    border:6px solid var(--wood-dark); border-radius:10px;
+    background:var(--mustard);
+  }
+  .end-card h2{
+    font-family:'Alfa Slab One',cursive; font-size:clamp(20px,5vw,28px);
+    color:var(--ink); margin:0 0 6px;
+  }
+  .end-card .winline{ font-size:14px; margin-bottom:6px; }
+  .end-tally{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:16px 0; text-align:left; }
+  @media(max-width:480px){ .end-tally{ grid-template-columns:1fr; } }
+  .end-panel{ background:var(--paper); border:3px solid var(--wood-dark); border-radius:8px; padding:12px 14px; }
+  .end-panel.winner{ border-color:var(--tomato); box-shadow:0 0 0 2px var(--tomato) inset; }
+  .end-panel h3{ font-family:'Alfa Slab One',cursive; font-size:14px; margin:0 0 2px; }
+  .end-panel .score-line{ font-size:12px; font-weight:700; color:var(--tomato-dark); margin-bottom:8px; }
+  .end-panel ul{ margin:0; padding-left:18px; font-size:13px; }
+  .end-panel .left{ font-size:12px; margin-top:8px; color:var(--wood-dark); }
+  .end-btn-row{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:10px; }
+
+  .grade-S{ background:#C13B2E; color:#F1E6CF; }
+  .grade-A{ background:#4E6E58; color:#F1E6CF; }
+  .grade-B{ background:#E8A93B; color:#2B211A; }
+  .grade-C{ background:#B8A67E; color:#2B211A; }
+  .grade-D{ background:#8a7d5e; color:#F1E6CF; }
+
+  .footer-note{ text-align:center; font-size:11px; color:var(--wood-dark); margin-top:26px; opacity:0.8; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Two GMs · One draft board · Twenty bucks each</div>
+    <h1>Fantasy Draft Showdown</h1>
+    <div class="subhead" id="subhead">Pick a league to start the auction.</div>
+  </header>
+
+  <div id="gameArea"></div>
+
+  <div class="footer-note">Pass the device between bids, or just cover the input with your hand. Player grades stay hidden until the gavel drops.</div>
+</div>
+
+<script>
+/* =====================  PLAYER POOLS  ===================== */
+const NFL_POOL = {
+  QB: ["Josh Allen","Patrick Mahomes","Lamar Jackson","Joe Burrow","Jalen Hurts","Justin Herbert","Dak Prescott","Matthew Stafford","Trevor Lawrence","C.J. Stroud","Kyler Murray","Brock Purdy","Jordan Love","Baker Mayfield","Geno Smith","Jared Goff","Drake Maye","Bo Nix","Anthony Richardson","Caleb Williams","Jayden Daniels","Michael Penix Jr.","J.J. McCarthy","Aaron Rodgers"],
+  RB: ["Christian McCaffrey","Bijan Robinson","Jahmyr Gibbs","Saquon Barkley","Derrick Henry","Josh Jacobs","Jonathan Taylor","Breece Hall","De'Von Achane","Kenneth Walker III","Isiah Pacheco","Travis Etienne","James Cook","Rachaad White","Alvin Kamara","Aaron Jones","Tony Pollard","Najee Harris","Rhamondre Stevenson","David Montgomery","James Conner","D'Andre Swift","Javonte Williams","Zack Moss"],
+  WR: ["Ja'Marr Chase","Justin Jefferson","CeeDee Lamb","Tyreek Hill","Amon-Ra St. Brown","Puka Nacua","A.J. Brown","Davante Adams","Stefon Diggs","DK Metcalf","Garrett Wilson","Chris Olave","Nico Collins","Malik Nabers","Marvin Harrison Jr.","Brandon Aiyuk","Deebo Samuel","Mike Evans","Jaylen Waddle","Tee Higgins","Terry McLaurin","DJ Moore","Calvin Ridley","Courtland Sutton","Drake London","Zay Flowers","Rome Odunze","Xavier Worthy","Jameson Williams","Keenan Allen","Diontae Johnson","Christian Kirk","Michael Pittman Jr.","Jerry Jeudy","Rashee Rice","Tank Dell"],
+  TE: ["Travis Kelce","Sam LaPorta","Mark Andrews","T.J. Hockenson","George Kittle","Trey McBride","Dallas Goedert","Evan Engram","David Njoku","Kyle Pitts","Brock Bowers","Jake Ferguson","Cole Kmet","Pat Freiermuth","Zach Ertz","Tucker Kraft","Isaiah Likely"],
+};
+
+const NBA_POOL = {
+  PG: ["Stephen Curry","Luka Dončić","Shai Gilgeous-Alexander","Damian Lillard","Trae Young","Ja Morant","Tyrese Haliburton","De'Aaron Fox","Darius Garland","Jalen Brunson","Cade Cunningham","LaMelo Ball","Kyrie Irving","Chris Paul","Russell Westbrook","Fred VanVleet","Mike Conley","D'Angelo Russell","Coby White","Jamal Murray"],
+  SG: ["Devin Booker","Anthony Edwards","Donovan Mitchell","Jaylen Brown","Bradley Beal","Zach LaVine","CJ McCollum","Tyler Herro","Klay Thompson","Desmond Bane","Jalen Green","Austin Reaves","Norman Powell","Malik Monk","Buddy Hield","Jordan Poole","Josh Giddey","Anfernee Simons","RJ Barrett","Immanuel Quickley"],
+  SF: ["LeBron James","Kevin Durant","Jayson Tatum","Kawhi Leonard","Paul George","Jimmy Butler","Mikal Bridges","DeMar DeRozan","Franz Wagner","Michael Porter Jr.","Brandon Ingram","OG Anunoby","Andrew Wiggins","Harrison Barnes","Scottie Barnes","Jaden McDaniels","Herbert Jones","Josh Hart","Kelly Oubre Jr.","Torrey Craig"],
+  PF: ["Giannis Antetokounmpo","Anthony Davis","Julius Randle","Pascal Siakam","Paolo Banchero","Domantas Sabonis","Karl-Anthony Towns","Jaren Jackson Jr.","Zion Williamson","Lauri Markkanen","John Collins","Aaron Gordon","Bam Adebayo","Draymond Green","Jerami Grant","Tobias Harris","P.J. Washington","Naz Reid","Grant Williams","Kyle Kuzma"],
+  C: ["Nikola Jokić","Joel Embiid","Victor Wembanyama","Rudy Gobert","Kristaps Porziņģis","Myles Turner","Nikola Vučević","Alperen Şengün","Walker Kessler","Deandre Ayton","Jarrett Allen","Clint Capela","Ivica Zubac","Brook Lopez","Isaiah Hartenstein","Daniel Gafford","Mitchell Robinson","Jusuf Nurkić","Nic Claxton","Jakob Poeltl"],
+};
+
+const SOCCER_POOL = {
+  GK: ["Alisson Becker","Ederson","Thibaut Courtois","Marc-André ter Stegen","Gianluigi Donnarumma","Jan Oblak","Emiliano Martínez","David Raya","Mike Maignan","André Onana","Yassine Bounou","Wojciech Szczęsny","Kepa Arrizabalaga","Unai Simón","Nick Pope","Aaron Ramsdale","Robert Sánchez","Bernd Leno","Diogo Costa","Predrag Rajković"],
+  DEF: ["Virgil van Dijk","Rúben Dias","William Saliba","Antonio Rüdiger","Éder Militão","Josko Gvardiol","Kyle Walker","Trent Alexander-Arnold","Achraf Hakimi","Theo Hernández","Alphonso Davies","Marquinhos","Kim Min-jae","Jules Koundé","Ben White","Reece James","John Stones","Gabriel Magalhães","Dayot Upamecano","Nathan Aké","Cristian Romero","Manuel Akanji","Milan Škriniar","Raphaël Varane","Lucas Hernández"],
+  MID: ["Kevin De Bruyne","Jude Bellingham","Rodri","Bruno Fernandes","Martin Ødegaard","Federico Valverde","Toni Kroos","Luka Modrić","Declan Rice","Pedri","Gavi","Frenkie de Jong","Casemiro","N'Golo Kanté","Bernardo Silva","İlkay Gündoğan","Jamal Musiala","Florian Wirtz","Christopher Nkunku","Dominik Szoboszlai","Enzo Fernández","Moisés Caicedo","Mason Mount","James Maddison","Marco Verratti","Thiago Alcântara","Granit Xhaka","Ryan Gravenberch","Conor Gallagher","Martín Zubimendi"],
+  FWD: ["Erling Haaland","Kylian Mbappé","Lionel Messi","Harry Kane","Vinícius Júnior","Mohamed Salah","Bukayo Saka","Ousmane Dembélé","Rafael Leão","Victor Osimhen","Robert Lewandowski","Cole Palmer","Phil Foden","Julián Álvarez","Lautaro Martínez","Marcus Rashford","Darwin Núñez","Gabriel Jesus","Antoine Griezmann","Serge Gnabry","Ademola Lookman","Khvicha Kvaratskhelia","Nicolas Jackson","Alexander Isak","Rasmus Højlund"],
+};
+
+/* =====================  SPORT CONFIG  ===================== */
+const SPORTS = {
+  nfl: {
+    label:"NFL", tagline:"Pro Football", emoji:"🏈",
+    posEmoji:{QB:"🏈",RB:"🏃",WR:"🙌",TE:"🧤"},
+    posLabel:{QB:"Quarterback",RB:"Running Back",WR:"Wide Receiver",TE:"Tight End"},
+    positions:[{key:"QB",count:1},{key:"RB",count:1},{key:"WR",count:2},{key:"TE",count:1}],
+    pool: NFL_POOL,
+  },
+  nba: {
+    label:"NBA", tagline:"Pro Basketball", emoji:"🏀",
+    posEmoji:{PG:"🏀",SG:"🏀",SF:"🏀",PF:"🏀",C:"🏀"},
+    posLabel:{PG:"Point Guard",SG:"Shooting Guard",SF:"Small Forward",PF:"Power Forward",C:"Center"},
+    positions:[{key:"PG",count:1},{key:"SG",count:1},{key:"SF",count:1},{key:"PF",count:1},{key:"C",count:1}],
+    pool: NBA_POOL,
+  },
+  soccer: {
+    label:"Soccer", tagline:"Global Football", emoji:"⚽",
+    posEmoji:{GK:"🧤",DEF:"🛡️",MID:"⚽",FWD:"🥅"},
+    posLabel:{GK:"Goalkeeper",DEF:"Defender",MID:"Midfielder",FWD:"Forward"},
+    positions:[{key:"GK",count:1},{key:"DEF",count:1},{key:"MID",count:2},{key:"FWD",count:1}],
+    pool: SOCCER_POOL,
+  },
+};
+
+const START_CASH = 20;
+const GRADE_INFO = {
+  S:{label:"Franchise Cornerstone", cls:"grade-S"},
+  A:{label:"Rock-Solid Starter", cls:"grade-A"},
+  B:{label:"Solid Contributor", cls:"grade-B"},
+  C:{label:"Boom-or-Bust", cls:"grade-C"},
+  D:{label:"Deep Bench Flier", cls:"grade-D"},
+};
+
+let state = null;
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function randomGrade(){
+  let raw = (Math.random()+Math.random()+Math.random())/3; // biased toward middle
+  let score = Math.round(28 + raw*72);
+  score = Math.min(99, Math.max(28, score));
+  const tier = score>=90 ? 'S' : score>=78 ? 'A' : score>=62 ? 'B' : score>=45 ? 'C' : 'D';
+  return { score, tier };
+}
+
+/* =====================  GAME SETUP  ===================== */
+function buildLotSequence(sport){
+  const groups = shuffle(sport.positions);
+  let seq = [];
+  groups.forEach(p=>{
+    for(let i=0;i<p.count*2;i++) seq.push(p.key);
+  });
+  return seq;
+}
+
+function buildItems(sport, lotSeq){
+  const used = {};
+  Object.keys(sport.pool).forEach(k=> used[k] = new Set());
+  return lotSeq.map(posKey=>{
+    const names = shuffle(sport.pool[posKey]);
+    const name = names.find(n=>!used[posKey].has(n)) || names[0];
+    used[posKey].add(name);
+    return {
+      name,
+      posKey,
+      posLabel: sport.posLabel[posKey],
+      emoji: sport.posEmoji[posKey],
+      grade: randomGrade(),
+    };
+  });
+}
+
+function emptyRoster(sport){
+  const r = {};
+  sport.positions.forEach(p=> r[p.key] = []);
+  return r;
+}
+
+function startDraft(sportKey){
+  const sport = SPORTS[sportKey];
+  const lotSeq = buildLotSequence(sport);
+  state = {
+    sportKey,
+    sport,
+    items: buildItems(sport, lotSeq),
+    index: 0,
+    players: {
+      p1: {name:"Player 1", balance:START_CASH, won:[], roster:emptyRoster(sport), key:"p1"},
+      p2: {name:"Player 2", balance:START_CASH, won:[], roster:emptyRoster(sport), key:"p2"},
+    },
+    bids: {p1:null, p2:null},
+    locked: {p1:false, p2:false},
+    revealed: false,
+    history: [],
+    ended: false,
+  };
+  document.getElementById('subhead').innerHTML =
+    `<b>${sport.label}</b> draft — build a 5-player roster. Bid in secret, grades stay hidden until reveal.`;
+  render();
+}
+
+function currentItem(){ return state.items[state.index]; }
+function needCount(sport, posKey){ return sport.positions.find(p=>p.key===posKey).count; }
+function teamScore(p){ return p.won.reduce((sum,i)=> sum + i.grade.score, 0); }
+
+function bothBroke(){
+  return state.players.p1.balance <= 0 && state.players.p2.balance <= 0;
+}
+
+function positionFull(key, posKey){
+  const p = state.players[key];
+  return p.roster[posKey].length >= needCount(state.sport, posKey);
+}
+
+function bothPositionFullOrBroke(posKey){
+  return ['p1','p2'].every(k => state.players[k].balance<=0 || positionFull(k,posKey));
+}
+
+/* =====================  RENDER: SPORT SELECT  ===================== */
+function renderSportSelect(){
+  const area = document.getElementById('gameArea');
+  document.getElementById('subhead').textContent = "Pick a league to start the auction.";
+  area.innerHTML = `
+    <div class="sport-select">
+      ${Object.entries(SPORTS).map(([key,s])=>`
+        <div class="sport-card" data-sport="${key}">
+          <span class="sport-emoji">${s.emoji}</span>
+          <div class="sport-name">${s.label}</div>
+          <div class="sport-sub">${s.tagline}</div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="select-hint">100-player pool per league · $20 budget · 5-player roster · 10 total lots</div>
+  `;
+  area.querySelectorAll('.sport-card').forEach(card=>{
+    card.addEventListener('click', ()=> startDraft(card.dataset.sport));
+  });
+}
+
+/* =====================  RENDER: GAME  ===================== */
+function render(){
+  const area = document.getElementById('gameArea');
+
+  if(!state){ renderSportSelect(); return; }
+
+  if(state.ended || state.index >= state.items.length || bothBroke()){
+    area.innerHTML = endScreenHTML();
+    attachEndHandlers();
+    return;
+  }
+
+  // auto-skip a lot if neither team can/needs to bid on it (position already full or broke both sides)
+  while(state.index < state.items.length && bothPositionFullOrBroke(currentItem().posKey)){
+    state.history.push({name:currentItem().name, emoji:currentItem().emoji, unsold:true, skipped:true});
+    state.index += 1;
+  }
+  if(state.index >= state.items.length || bothBroke()){
+    area.innerHTML = endScreenHTML();
+    attachEndHandlers();
+    return;
+  }
+
+  const item = currentItem();
+  area.innerHTML = `
+    <div class="board" data-lot="${state.index+1}">
+      <div class="item-category">Lot ${state.index+1} of ${state.items.length} · ${item.posLabel}</div>
+      <span class="item-emoji">${item.emoji}</span>
+      <div class="item-name">${item.name}</div>
+      <div class="item-mystery" id="mysteryLine">🔒 Fantasy grade hidden until reveal</div>
+      <div class="stamp-layer" id="stampLayer"><div class="stamp" id="stamp"></div></div>
+    </div>
+
+    <div class="players">
+      ${playerPanelHTML('p1')}
+      ${playerPanelHTML('p2')}
+    </div>
+
+    <div class="controls">
+      <button class="main-btn" id="actionBtn">Reveal Bids</button>
+      <div class="hint" id="hintLine">Both players: enter a bid, then hit Lock In.</div>
+    </div>
+
+    <div class="history-wrap">
+      <div class="history-title">Draft Log</div>
+      <div class="history" id="history">${historyHTML()}</div>
+    </div>
+  `;
+  attachHandlers();
+  updateActionButton();
+}
+
+function playerPanelHTML(key){
+  const p = state.players[key];
+  const item = currentItem();
+  const broke = p.balance <= 0;
+  const posFull = positionFull(key, item.posKey);
+  const canBid = !broke && !posFull;
+  const locked = state.locked[key];
+  return `
+    <div class="panel ${key} ${broke?'broke':''}" id="panel-${key}">
+      <div class="panel-head">
+        <div class="pname">${p.name}</div>
+        <div class="balance">$<span class="amt">${p.balance}</span></div>
+      </div>
+      <div class="team-score">Team score: ${teamScore(p)} pts</div>
+      <div class="bid-row">
+        <input class="bid-input" id="input-${key}" type="text" inputmode="numeric" pattern="[0-9]*"
+          placeholder="${!canBid ? (broke?'broke':'slot full') : 'bid $'}" ${!canBid || locked ? 'disabled' : ''} maxlength="3">
+        <button class="lock-btn" id="lock-${key}" ${!canBid ? 'disabled' : ''}>${locked ? 'Locked ✓' : 'Lock In'}</button>
+      </div>
+      <div class="status-line ${locked?'locked':''}" id="status-${key}">${statusText(key)}</div>
+      <div class="roster-chips">${rosterChipsHTML(p)}</div>
+    </div>
+  `;
+}
+
+function rosterChipsHTML(p){
+  const sport = state.sport;
+  let out = '';
+  sport.positions.forEach(posDef=>{
+    for(let i=0;i<posDef.count;i++){
+      const filled = p.roster[posDef.key][i];
+      out += `<div class="chip ${filled?'filled':''}">
+        <span class="chip-slot">${posDef.key}</span>
+        <span class="chip-name">${filled ? filled.name : '—'}</span>
+        ${filled ? `<span class="chip-grade ${GRADE_INFO[filled.grade.tier].cls}">${filled.grade.tier}</span>` : ''}
+      </div>`;
+    }
+  });
+  return out;
+}
+
+function statusText(key){
+  const p = state.players[key];
+  const item = currentItem();
+  if(p.balance <= 0) return "Out of cash — sits this one out";
+  if(positionFull(key, item.posKey)) return `${item.posKey} slot already filled`;
+  if(state.locked[key]) return "Bid locked in";
+  return "Waiting for bid...";
+}
+
+function historyHTML(){
+  if(!state.history.length) return `<div class="history-empty">No picks yet — first lot is up!</div>`;
+  return state.history.slice().reverse().map(h=>{
+    if(h.skipped){
+      return `<div class="history-row unsold"><span>${h.emoji} ${h.name}</span><span>skipped (slots full)</span></div>`;
+    }
+    if(h.unsold){
+      return `<div class="history-row unsold"><span>${h.emoji} ${h.name}</span><span>no sale (tie or no bids)</span></div>`;
+    }
+    return `<div class="history-row"><span>${h.emoji} ${h.name}</span><span class="win">${h.winnerName} — $${h.price} · ${h.tier}</span></div>`;
+  }).join('');
+}
+
+function attachHandlers(){
+  ['p1','p2'].forEach(key=>{
+    const input = document.getElementById(`input-${key}`);
+    const lockBtn = document.getElementById(`lock-${key}`);
+    if(!input) return;
+
+    input.addEventListener('input', ()=>{
+      input.value = input.value.replace(/[^0-9]/g,'');
+      const max = state.players[key].balance;
+      if(input.value !== '' && parseInt(input.value,10) > max){
+        input.value = String(max);
+      }
+    });
+
+    lockBtn.addEventListener('click', ()=>{
+      if(state.locked[key]) return;
+      const val = input.value === '' ? 0 : parseInt(input.value,10);
+      state.bids[key] = Math.max(0, Math.min(val, state.players[key].balance));
+      state.locked[key] = true;
+      render();
+    });
+  });
+
+  document.getElementById('actionBtn').addEventListener('click', handleAction);
+}
+
+function updateActionButton(){
+  const btn = document.getElementById('actionBtn');
+  const hint = document.getElementById('hintLine');
+  if(!btn) return;
+  const item = currentItem();
+  const p1ready = state.locked.p1 || state.players.p1.balance<=0 || positionFull('p1', item.posKey);
+  const p2ready = state.locked.p2 || state.players.p2.balance<=0 || positionFull('p2', item.posKey);
+
+  if(state.revealed){
+    btn.textContent = "Next Lot";
+    btn.disabled = false;
+    hint.textContent = "Pass it on — the next lot is on the clock.";
+  } else if(p1ready && p2ready){
+    btn.textContent = "Reveal Bids";
+    btn.disabled = false;
+    hint.textContent = "Both bids are in. Reveal when ready!";
+  } else {
+    btn.textContent = "Reveal Bids";
+    btn.disabled = true;
+    hint.textContent = "Both players: enter a bid, then hit Lock In.";
+  }
+}
+
+function handleAction(){
+  if(!state.revealed){
+    doReveal();
+  } else {
+    doNext();
+  }
+}
+
+function doReveal(){
+  const item = currentItem();
+  ['p1','p2'].forEach(key=>{
+    if(state.players[key].balance <= 0 || positionFull(key, item.posKey)) state.bids[key] = 0;
+  });
+
+  const b1 = state.bids.p1 || 0;
+  const b2 = state.bids.p2 || 0;
+
+  ['p1','p2'].forEach(key=>{
+    const inp = document.getElementById(`input-${key}`);
+    if(inp){
+      inp.classList.add('revealed');
+      inp.value = String(state.bids[key] || 0);
+    }
+  });
+
+  let winnerKey = null;
+  if(b1 === 0 && b2 === 0) winnerKey = null;
+  else if(b1 > b2) winnerKey = 'p1';
+  else if(b2 > b1) winnerKey = 'p2';
+  else winnerKey = null;
+
+  const stampEl = document.getElementById('stamp');
+  const layer = document.getElementById('stampLayer');
+  const g = item.grade;
+  const gInfo = GRADE_INFO[g.tier];
+
+  if(winnerKey){
+    const price = Math.max(b1,b2);
+    state.players[winnerKey].balance -= price;
+    state.players[winnerKey].won.push(item);
+    state.players[winnerKey].roster[item.posKey].push(item);
+    state.history.push({name:item.name, emoji:item.emoji, winnerName: state.players[winnerKey].name, price, tier:g.tier});
+    stampEl.classList.add('sold');
+    stampEl.innerHTML = `SOLD!<small>${state.players[winnerKey].name} · $${price}</small>
+      <div class="grade-badge ${gInfo.cls}">${g.tier} · ${g.score} — ${gInfo.label}</div>`;
+  } else {
+    state.history.push({name:item.name, emoji:item.emoji, unsold:true});
+    stampEl.innerHTML = `NO SALE<small>tie or no bids</small>
+      <div class="grade-badge ${gInfo.cls}">${g.tier} · ${g.score} — ${gInfo.label}</div>`;
+  }
+
+  layer.classList.add('show');
+  requestAnimationFrame(()=>stampEl.classList.add('animate'));
+
+  const mysteryLine = document.getElementById('mysteryLine');
+  if(mysteryLine) mysteryLine.textContent = `Revealed: Grade ${g.tier} (${g.score}) — ${gInfo.label}`;
+
+  state.revealed = true;
+
+  ['p1','p2'].forEach(key=>{
+    document.getElementById(`panel-${key}`).outerHTML = playerPanelHTML(key);
+  });
+  ['p1','p2'].forEach(key=>{
+    const inp = document.getElementById(`input-${key}`);
+    if(inp){
+      inp.value = String(state.bids[key] || 0);
+      inp.classList.add('revealed');
+      inp.disabled = true;
+    }
+    const lockBtn = document.getElementById(`lock-${key}`);
+    if(lockBtn) lockBtn.disabled = true;
+  });
+  document.getElementById('history').innerHTML = historyHTML();
+  updateActionButton();
+}
+
+function doNext(){
+  state.index += 1;
+  state.bids = {p1:null, p2:null};
+  state.locked = {p1:false, p2:false};
+  state.revealed = false;
+  render();
+}
+
+/* =====================  END SCREEN  ===================== */
+function endScreenHTML(){
+  const p1 = state.players.p1, p2 = state.players.p2;
+  const s1 = teamScore(p1), s2 = teamScore(p2);
+  let winnerLine, p1Class = '', p2Class = '';
+  if(s1 > s2){ winnerLine = `${p1.name} wins on team score, ${s1} to ${s2}!`; p1Class='winner'; }
+  else if(s2 > s1){ winnerLine = `${p2.name} wins on team score, ${s2} to ${s1}!`; p2Class='winner'; }
+  else winnerLine = `Dead heat — both rosters score ${s1} points!`;
+
+  const rosterList = (p)=>{
+    const sport = state.sport;
+    let items = [];
+    sport.positions.forEach(posDef=>{
+      for(let i=0;i<posDef.count;i++){
+        const filled = p.roster[posDef.key][i];
+        items.push(filled
+          ? `<li><b>${posDef.key}:</b> ${filled.emoji} ${filled.name} <span class="chip-grade ${GRADE_INFO[filled.grade.tier].cls}">${filled.grade.tier}·${filled.grade.score}</span></li>`
+          : `<li><b>${posDef.key}:</b> <em>unsigned</em></li>`);
+      }
+    });
+    return items.join('');
+  };
+
+  return `
+    <div class="end-card">
+      <h2>🔔 Draft complete — ${state.sport.label} board is set!</h2>
+      <div class="winline">${winnerLine}</div>
+      <div class="end-tally">
+        <div class="end-panel ${p1Class}">
+          <h3>${p1.name}</h3>
+          <div class="score-line">Team score: ${s1} pts</div>
+          <ul>${rosterList(p1)}</ul>
+          <div class="left">$${p1.balance} left in pocket</div>
+        </div>
+        <div class="end-panel ${p2Class}">
+          <h3>${p2.name}</h3>
+          <div class="score-line">Team score: ${s2} pts</div>
+          <ul>${rosterList(p2)}</ul>
+          <div class="left">$${p2.balance} left in pocket</div>
+        </div>
+      </div>
+      <div class="end-btn-row">
+        <button class="main-btn" id="restartBtn">Run It Back — ${state.sport.label}</button>
+        <button class="main-btn ghost" id="switchBtn">Switch League</button>
+      </div>
+    </div>
+  `;
+}
+
+function attachEndHandlers(){
+  const btn = document.getElementById('restartBtn');
+  if(btn) btn.addEventListener('click', ()=> startDraft(state.sportKey));
+  const switchBtn = document.getElementById('switchBtn');
+  if(switchBtn) switchBtn.addEventListener('click', ()=>{ state = null; render(); });
+}
+
+render();
+</script>
+</body>
+</html>
