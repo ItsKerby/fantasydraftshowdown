@@ -84,10 +84,21 @@ h1{font-family:var(--display);font-size:clamp(28px,7.5vw,44px);color:var(--tomat
 .src input{display:none}
 
 /* ---------- slot rail ---------- */
+/* ---------- top bar ---------- */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.back{font-family:'Courier Prime',monospace;font-size:12px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;border:3px solid var(--wood-2);border-radius:var(--r);background:var(--paper-2);
+  color:var(--wood-3);padding:8px 13px;cursor:pointer;transition:background .12s,color .12s,border-color .12s}
+.back:hover{background:var(--paper-3)}
+.back.armed{border-color:var(--tomato);background:#fff0e8;color:var(--tomato-2)}
+.topbar .ctx{font-size:11.5px;color:var(--wood-3);letter-spacing:.09em;text-transform:uppercase;
+  font-weight:700;text-align:right}
+
 .rail{display:flex;gap:5px;margin-bottom:12px}
-.rail div{flex:1;height:8px;border-radius:4px;background:var(--paper-3);border:1px solid var(--wood)}
-.rail div.done{background:var(--pickle)}
-.rail div.now{background:var(--mustard)}
+.rail div{flex:1;border-radius:5px;background:var(--paper-3);border:2px solid var(--wood);
+  font-family:var(--display);font-size:11.5px;text-align:center;padding:5px 0;color:var(--wood-3)}
+.rail div.done{background:var(--pickle);border-color:var(--pickle-2);color:var(--paper)}
+.rail div.now{background:var(--mustard);border-color:var(--ink);color:var(--ink)}
 
 /* ---------- lot board: the name is the headline ---------- */
 .board{
@@ -101,11 +112,13 @@ h1{font-family:var(--display);font-size:clamp(28px,7.5vw,44px);color:var(--tomat
 .board .round{right:14px}
 .pos-line{font-size:12px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;
   color:var(--mustard);margin-bottom:10px}
+.pos-line .range{color:rgba(241,230,207,.65);letter-spacing:.1em}
 .p-name{font-family:var(--display);color:var(--paper);
   font-size:clamp(27px,7.2vw,40px);line-height:1.06;text-shadow:1px 2px 0 rgba(0,0,0,.22)}
 .p-team{font-size:14px;color:rgba(241,230,207,.88);margin-top:8px}
 .buzz{margin-top:14px;font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
   color:rgba(241,230,207,.75)}
+.buzz.blind{margin-top:16px;font-size:11.5px;letter-spacing:.18em;color:rgba(241,230,207,.6)}
 .buzz .stars{display:block;color:var(--mustard);letter-spacing:.14em;font-size:26px;margin-top:4px;
   text-shadow:1px 1px 0 rgba(0,0,0,.25)}
 .ovr-box{margin-top:14px;display:inline-flex;align-items:center;gap:12px;background:var(--paper);
@@ -133,7 +146,79 @@ h1{font-family:var(--display);font-size:clamp(28px,7.5vw,44px);color:var(--tomat
 .gm{border:4px solid var(--wood-2);border-radius:var(--r);background:var(--paper-2);padding:14px 15px 11px}
 .gm.p1{box-shadow:inset 0 0 0 3px rgba(232,169,59,.55)}
 .gm.p2{box-shadow:inset 0 0 0 3px rgba(78,110,88,.5)}
-.gm.up{border-color:var(--tomato)}
+.gm{transition:transform .15s,box-shadow .15s,opacity .15s}
+.gm.up{border-color:var(--ink);transform:translateY(-3px)}
+.gm.p1.up{background:#FBEDC8;box-shadow:0 0 0 5px var(--mustard),0 7px 0 rgba(0,0,0,.2)}
+.gm.p2.up{background:#DBE6DC;box-shadow:0 0 0 5px var(--pickle),0 7px 0 rgba(0,0,0,.2)}
+.gm.off{opacity:.55;filter:saturate(.55)}
+.onclock{display:block;margin:-14px -15px 11px;padding:7px 6px;text-align:center;
+  font-family:var(--display);font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;
+  border-radius:4px 4px 0 0}
+.p1 .onclock{background:var(--mustard-2);color:#fff}
+.p2 .onclock{background:var(--pickle-2);color:#fff}
+.pip{display:inline-block;width:13px;height:13px;border:2px solid var(--ink);border-radius:3px;
+  vertical-align:-1px;margin-right:7px;flex:none}
+.p1 .pip{background:var(--mustard)} .p2 .pip{background:var(--pickle)}
+
+/* ---------- turn banner ---------- */
+.turnbar{display:flex;align-items:center;justify-content:center;gap:10px;text-align:center;
+  border:4px solid var(--ink);border-radius:var(--r);padding:14px 14px;margin-bottom:12px;
+  font-family:var(--display);font-size:clamp(17px,4.6vw,22px);line-height:1.2}
+.turnbar.p1{background:var(--mustard);color:var(--ink)}
+.turnbar.p2{background:var(--pickle);color:var(--paper)}
+.turnbar.p2 .pip{border-color:var(--paper)}
+.turnbar small{display:block;font-family:'Courier Prime',monospace;font-size:12px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;opacity:.8;margin-top:4px}
+.btn.as-p1{background:var(--mustard-2);box-shadow:0 4px 0 #7A5209}
+.btn.as-p2{background:var(--pickle);box-shadow:0 4px 0 var(--pickle-2)}
+
+/* ---------- name setup ---------- */
+.names{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.nameField{display:flex;align-items:center;flex:1;border:4px solid var(--wood-2);border-radius:var(--r);
+  background:var(--paper-2);padding:10px 12px;min-width:0}
+.nameField.p1{box-shadow:inset 0 0 0 3px rgba(232,169,59,.55)}
+.nameField.p2{box-shadow:inset 0 0 0 3px rgba(78,110,88,.5)}
+.nameField input{flex:1;min-width:0;border:none;background:transparent;font-family:var(--display);
+  font-size:19px;color:inherit;padding:0;width:100%}
+.nameField input:focus{outline:none}
+.nameField.p1 input{color:var(--mustard-2)} .nameField.p2 input{color:var(--pickle-2)}
+.vs{font-family:var(--display);font-size:15px;color:var(--wood-2);flex:none}
+.setup-lbl{font-family:var(--display);font-size:13px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--wood-2);text-align:center;margin-bottom:9px}
+.diff{border:4px solid var(--wood-2);border-radius:var(--r);background:var(--paper-2);
+  padding:12px 16px 13px;margin-bottom:16px}
+.diff input[type=range]{width:100%;accent-color:var(--tomato);height:28px;margin:0;cursor:pointer}
+.diff-stops{display:flex;justify-content:space-between;font-family:var(--display);font-size:12.5px;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--wood-3)}
+.diff-stops span.on{color:var(--tomato)}
+.diff-note{font-size:12.5px;color:var(--wood-3);margin-top:9px;line-height:1.5;text-align:center}
+.botName{font-family:var(--display);font-size:19px;color:var(--pickle-2)}
+
+/* ---------- settings toggles ---------- */
+.togs{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:16px}
+@media(max-width:430px){.togs{grid-template-columns:1fr}}
+.tog{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;
+  border:4px solid var(--wood-2);border-radius:var(--r);background:var(--paper-2);color:inherit;
+  font-family:inherit;padding:11px 13px;cursor:pointer;text-align:left;
+  transition:background .12s,border-color .12s}
+.tog:hover{background:var(--paper-3)}
+.tog-lbl{font-family:var(--display);font-size:13px}
+.tog-state{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--wood-3);border:2px solid var(--wood);border-radius:20px;padding:3px 9px;white-space:nowrap}
+.tog.on{border-color:var(--pickle-2);background:#E3EBE2}
+.tog.on .tog-state{color:#fff;background:var(--pickle-2);border-color:var(--pickle-2)}
+
+/* ---------- scoreboard ---------- */
+.scoreboard{border:4px solid var(--ink);border-radius:var(--r);background:var(--mustard);
+  padding:13px 14px;margin-bottom:16px;text-align:center}
+.sb-lbl{font-family:var(--display);font-size:11.5px;letter-spacing:.26em;text-transform:uppercase;opacity:.72}
+.sb-line{font-family:var(--display);font-size:clamp(17px,4.6vw,22px);margin:6px 0 9px;line-height:1.25}
+.sb-reset{font-family:'Courier Prime',monospace;font-size:11px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;border:2px solid var(--ink);border-radius:20px;background:transparent;
+  color:var(--ink);padding:4px 12px;cursor:pointer}
+.sb-reset:hover{background:var(--paper)}
+.sb-strip{border:3px dashed var(--wood);border-radius:var(--r);background:var(--paper);
+  padding:10px;margin-bottom:14px;font-size:13.5px;font-weight:700}
 .gm-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;
   border-bottom:3px solid var(--wood);padding-bottom:10px;margin-bottom:6px}
 .gm-name{font-family:var(--display);font-size:19px;line-height:1.1}
@@ -163,9 +248,14 @@ h1{font-family:var(--display);font-size:clamp(28px,7.5vw,44px);color:var(--tomat
 .slot.live .pos{color:var(--mustard-2);border-color:var(--mustard-2)}
 
 /* ---------- bid pad: the readout is the whole screen ---------- */
-.pad-head{text-align:center;margin-bottom:14px}
-.pad-who{font-family:var(--display);font-size:25px;line-height:1.15}
-.pad-sub{font-size:13px;color:var(--wood-3);margin-top:6px;line-height:1.5}
+.pad-head{text-align:center;margin-bottom:14px;border:4px solid var(--ink);border-radius:var(--r);
+  padding:16px 14px}
+.pad-head.p1{background:var(--mustard)}
+.pad-head.p2{background:var(--pickle);color:var(--paper)}
+.pad-who{font-family:var(--display);font-size:clamp(23px,6vw,29px);line-height:1.15}
+.pad-sub{font-size:13.5px;margin-top:8px;line-height:1.5}
+.pad-head.p1 .pad-sub{color:#6B4A08} .pad-head.p2 .pad-sub{color:rgba(241,230,207,.9)}
+.pad-head.p2 .pad-sub .stars{color:var(--mustard)}
 .pad-sub .stars{color:var(--mustard-2);font-size:15px;letter-spacing:.08em}
 .readout{border:4px solid var(--wood-2);border-radius:var(--r);background:var(--ink);color:var(--mustard);
   text-align:center;padding:16px 10px 18px;margin-bottom:12px;font-family:var(--display);
@@ -189,8 +279,11 @@ h1{font-family:var(--display);font-size:clamp(28px,7.5vw,44px);color:var(--tomat
 .reserve .sub b{color:var(--tomato-2)}
 
 /* ---------- curtain ---------- */
-.curtain{border:5px solid var(--wood-2);border-radius:var(--r);background:var(--mustard);
+.curtain{border:5px solid var(--ink);border-radius:var(--r);background:var(--mustard);
   text-align:center;padding:46px 18px;cursor:pointer}
+.curtain.p1{background:var(--mustard)}
+.curtain.p2{background:var(--pickle);color:var(--paper)}
+.curtain.p2 .sm{color:rgba(241,230,207,.88)}
 .curtain .big{font-family:var(--display);font-size:clamp(24px,6.6vw,34px);line-height:1.2}
 .curtain .sm{font-size:13.5px;margin-top:10px;color:var(--wood-3)}
 .curtain .tap{margin-top:18px;font-size:12px;letter-spacing:.22em;text-transform:uppercase;font-weight:700}
@@ -198,6 +291,8 @@ h1{font-family:var(--display);font-size:clamp(28px,7.5vw,44px);color:var(--tomat
 /* ---------- reveal ---------- */
 .tickets{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
 .tk{border:3px solid var(--wood-2);border-radius:var(--r);background:var(--paper-2);padding:12px;text-align:center}
+.tk.p1{border-top:9px solid var(--mustard)} .tk.p2{border-top:9px solid var(--pickle)}
+.tk .who{display:flex;align-items:center;justify-content:center}
 .tk.win{border-color:var(--tomato);background:#fff5e4;box-shadow:0 0 0 2px var(--tomato) inset}
 .tk .who{font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--wood-3);font-weight:700}
 .tk .amt{font-family:var(--display);font-size:38px;margin-top:4px;line-height:1}
@@ -222,9 +317,22 @@ h1{font-family:var(--display);font-size:clamp(28px,7.5vw,44px);color:var(--tomat
 .log-empty{text-align:center;color:var(--wood-3);font-style:italic}
 
 /* ---------- end ---------- */
-.end{border:5px solid var(--wood-2);border-radius:var(--r);background:var(--mustard);padding:22px 14px;text-align:center}
-.end h2{font-family:var(--display);font-size:clamp(20px,5.2vw,27px);margin:0 0 8px}
-.end .final{font-size:17px;line-height:1.45;margin-bottom:16px;font-weight:700}
+.end{border:5px solid var(--wood-2);border-radius:var(--r);background:var(--paper-2);padding:16px 14px 20px;text-align:center}
+.end h2{font-family:var(--display);font-size:12.5px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--wood-2);margin:0 0 12px}
+@keyframes drop{0%{transform:scale(1.5);opacity:0}60%{transform:scale(.96);opacity:1}100%{transform:scale(1);opacity:1}}
+.crown{border:5px solid var(--ink);border-radius:var(--r);padding:18px 14px 16px;margin-bottom:16px;
+  animation:drop .45s cubic-bezier(.2,1.4,.4,1) both}
+.crown.p1{background:var(--mustard);color:var(--ink)}
+.crown.p2{background:var(--pickle);color:var(--paper)}
+.crown.tie{background:var(--paper-3);color:var(--ink)}
+.crown-lbl{font-family:var(--display);font-size:13px;letter-spacing:.3em;text-transform:uppercase;opacity:.72}
+.crown-name{font-family:var(--display);font-size:clamp(34px,10vw,56px);line-height:1.02;
+  margin:8px 0 12px;overflow-wrap:anywhere}
+.crown-score{font-family:var(--display);font-size:clamp(24px,6.4vw,32px);line-height:1}
+.crown-score .lo{opacity:.62;font-size:.72em}
+.crown-margin{font-size:13.5px;margin-top:9px;font-weight:700;letter-spacing:.03em}
+.crown.p2 .crown-margin{color:var(--mustard)}
 .h2h{background:var(--paper);border:3px solid var(--wood-2);border-radius:var(--r);overflow:hidden;text-align:left}
 .h2h-row{display:grid;grid-template-columns:1fr 52px 1fr;align-items:center;gap:8px;padding:10px;
   border-bottom:1px dashed var(--paper-3);font-size:13px}
@@ -296,9 +404,37 @@ const SPORTS = {
 
 const CASH = 20;         // starting budget per GM
 const FLOOR = 2;         // house minimum on an uncontested lot
+const SPLIT_TOL = 3;     // max OVR gap between two names dealt in the same deal
+const WALK_GAP = [7,13]; // how far below the signed player a waiver walk lands
+const MATCH_SPREAD = 4;  // round 2 offers a name this close to the one that just sold
 const app = document.getElementById('app');
 let S = null;            // game state
 let poolNote = "";       // where the ratings came from
+const DIFFS = [
+  { label:'Easy',   lot:[0, .35, 1.35], waiver:[.35, .70],
+    note:'Household names only — the top third of every position pool.' },
+  { label:'Medium', lot:[0, .75, 1.15], waiver:[.55, 1],
+    note:'Stars plus plenty of names you half-remember. Rotation players show up.' },
+  { label:'Hard',   lot:[0, 1, 1],      waiver:[.55, 1],
+    note:'The entire pool at flat odds. Deep cuts, backups, third-stringers — and no scout buzz at all.' },
+];
+let DIFF = 1;
+
+/* lobby settings — every one of these is a button in the setup screen */
+const OPT = { solo:false, sound:true, series:true, preview:true, ranges:false };
+const TOGGLES = [
+  { key:'solo',    label:'Opponent', on:'Computer',  off:'2 players' },
+  { key:'sound',   label:'Sound',    on:'On',        off:'Off' },
+  { key:'series',  label:'Scoreboard', on:'Keeping score', off:'Off' },
+  { key:'preview', label:'Slot order', on:'Shown upfront', off:'Hidden' },
+  { key:'ranges',  label:'Pool ranges', on:'Shown',   off:'Hidden' },
+];
+const SERIES = { p1:0, p2:0, n:0 };
+const BOT_NAME = 'THE HOUSE';
+const isBot = k => OPT.solo && k === 'p2';
+
+const DEFAULTS = { p1:'HOME', p2:'AWAY' };
+const NAMES = { ...DEFAULTS };
 
 /* ============================================================
    HELPERS
@@ -309,6 +445,8 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':
 const shuffle = a => { a = a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.random()*(i+1)|0; [a[i],a[j]]=[a[j],a[i]]; } return a; };
 const tierOf = p => p<.08?'S':p<.25?'A':p<.50?'B':p<.75?'C':'D';
 const stars = n => '★'.repeat(n) + '☆'.repeat(5-n);
+/* Hard runs blind — the name on the board is the only read you get */
+const scouted = () => DIFF < 2;
 
 function buildPool(sportKey){
   const raw = POOLS[sportKey], out = {};
@@ -320,22 +458,101 @@ function buildPool(sportKey){
   return out;
 }
 
-/* Lots skew toward the top of the board so the names mean something. */
-function draw(pos, from, to){
-  const list = S.pool[pos], n = list.length;
-  const lo = Math.floor(n*(from||0)), hi = Math.floor(n*(to||1));
-  for(let t=0;t<60;t++){
-    const i = from === undefined
-      ? Math.floor(n*Math.pow(Math.random(),1.7))
-      : lo + Math.floor(Math.random()*(hi-lo));
-    const p = list[Math.min(i,n-1)];
-    if(!S.used.has(p.name)){ S.used.add(p.name); return p; }
-  }
-  const p = list.slice(lo).find(x=>!S.used.has(x.name)) || list[n-1];
-  S.used.add(p.name); return p;
+/* Names already shown stay off the board for a while — this survives "run it back",
+   so back-to-back drafts don't keep serving the same handful of stars. Capped at 40%
+   of each pool so there's always a deep pile of eligible names left. */
+const RECENT = {};
+const recentKey = pos => S.sportKey + '|' + pos;
+function remember(pos, name){
+  /* scaled to the window this difficulty draws from — on Easy the window is small,
+     so a pool-sized memory would exhaust it and start leaking in unknown players */
+  const k = recentKey(pos), cap = Math.max(3, Math.floor(S.pool[pos].length * DIFFS[DIFF].lot[1] * .4));
+  const q = RECENT[k] || (RECENT[k] = []);
+  q.push(name);
+  while(q.length > cap) q.shift();
 }
-const drawLot    = pos => draw(pos);            // headline names
-const drawWaiver = pos => draw(pos, .72, 1);    // replacement level
+function take(pos, p){ S.used.add(p.name); remember(pos, p.name); return p; }
+
+/* Builds the list of names actually eligible right now, then picks across it.
+   exp > 1 tilts toward the top of the window; exp = 1 is flat. */
+function pick(pos, from, to, exp){
+  const list = S.pool[pos], n = list.length;
+  const lo = Math.floor(n * from), hi = Math.max(lo + 1, Math.floor(n * to));
+  const recent = RECENT[recentKey(pos)] || [];
+  let cand = [];
+  for(let i = lo; i < hi; i++){
+    const p = list[i];
+    if(!S.used.has(p.name) && recent.indexOf(p.name) < 0) cand.push(i);
+  }
+  if(!cand.length) for(let i = lo; i < hi; i++) if(!S.used.has(list[i].name)) cand.push(i);
+  if(!cand.length) for(let i = 0; i < n; i++) if(!S.used.has(list[i].name)) cand.push(i);
+  if(!cand.length) return take(pos, list[0]);
+  const r = exp === 1 ? Math.random() : Math.pow(Math.random(), exp);
+  return take(pos, list[cand[Math.min(cand.length - 1, Math.floor(cand.length * r))]]);
+}
+
+const drawLot    = pos => pick(pos, DIFFS[DIFF].lot[0], DIFFS[DIFF].lot[1], DIFFS[DIFF].lot[2]);
+const drawWaiver = pos => pick(pos, DIFFS[DIFF].waiver[0], DIFFS[DIFF].waiver[1], 1);
+
+/* When both GMs get a name out of the same deal, the two have to be comparable —
+   a coin flip between a 91 and an 82 isn't a coin flip. Pulls a random unused
+   player within SPLIT_TOL of the target, or the closest one left if none qualify. */
+/* A walk should cost a predictable tier, not a random cliff. Without this the loser
+   could take a 55 against a 95 and the draft is over on one slot. Lands WALK_GAP below
+   the name that just sold, clamped to whatever the pool actually has. */
+function drawWalk(pos, signedOvr){
+  const list = S.pool[pos];
+  const recent = RECENT[recentKey(pos)] || [];
+  const free = list.filter(p => !S.used.has(p.name));
+  if(!free.length) return drawWaiver(pos);
+  const hi = signedOvr - WALK_GAP[0], lo = signedOvr - WALK_GAP[1];
+  const roll = bag => {
+    const fresh = bag.filter(p => recent.indexOf(p.name) < 0);
+    const use = fresh.length ? fresh : bag;
+    return take(pos, use[Math.random() * use.length | 0]);
+  };
+  const band = free.filter(p => p.ovr <= hi && p.ovr >= lo);
+  if(band.length) return roll(band);
+  /* Pool can't drop that far — soccer only spans 80-91. Take the best name that
+     still clears the penalty, and if even that's impossible, the worst one left. */
+  const under = free.filter(p => p.ovr <= hi);
+  if(under.length){
+    const best = Math.max(...under.map(p => p.ovr));
+    return roll(under.filter(p => p.ovr === best));
+  }
+  const worst = Math.min(...free.map(p => p.ovr));
+  return roll(free.filter(p => p.ovr === worst));
+}
+
+/* What a walk is likely to fetch, so the choice is informed rather than blind. */
+function walkRange(pos, signedOvr){
+  const free = S.pool[pos].filter(p => !S.used.has(p.name));
+  const hi = signedOvr - WALK_GAP[0];
+  const band = free.filter(p => p.ovr <= hi && p.ovr >= signedOvr - WALK_GAP[1]);
+  if(band.length){ const o = band.map(p => p.ovr); return [Math.min(...o), Math.max(...o)]; }
+  const under = free.filter(p => p.ovr <= hi);
+  const v = under.length ? Math.max(...under.map(p => p.ovr)) : Math.min(...free.map(p => p.ovr));
+  return [v, v];
+}
+
+function drawNear(pos, target, tol){
+  const list = S.pool[pos];
+  const recent = RECENT[recentKey(pos)] || [];
+  const free = list.filter(p => !S.used.has(p.name));
+  if(!free.length) return drawLot(pos);
+  const near = free.filter(p => Math.abs(p.ovr - target) <= (tol || SPLIT_TOL));
+  if(near.length){
+    /* tolerance outranks freshness — a fair pairing matters more than a new face —
+       but stay inside the difficulty's window when it can be done */
+    const cut = list.length * DIFFS[DIFF].lot[1];
+    const known = near.filter(p => p.rank < cut);
+    const scope = known.length ? known : near;
+    const fresh = scope.filter(p => recent.indexOf(p.name) < 0);
+    const bag = fresh.length ? fresh : scope;
+    return take(pos, bag[Math.random() * bag.length | 0]);
+  }
+  return take(pos, free.reduce((x,y) => Math.abs(y.ovr - target) < Math.abs(x.ovr - target) ? y : x));
+}
 
 /* Public scouting buzz — honest-ish, occasionally wrong. */
 function buzzOf(p){
@@ -349,6 +566,47 @@ function buzzTag(p, buzz){
   if(buzz - honest >= 1) return {txt:'Overhyped', cls:'t-C'};
   return null;
 }
+
+/* ============================================================
+   SOUND — synthesised, no files. Context is created on the first
+   click because browsers refuse to start audio without a gesture.
+   ============================================================ */
+let AC = null;
+function actx(){
+  if(!OPT.sound) return null;
+  try{
+    if(!AC) AC = new (window.AudioContext || window.webkitAudioContext)();
+    if(AC.state === 'suspended') AC.resume();
+    return AC;
+  }catch(e){ return null; }
+}
+function tone(freq, dur, type, vol, delay){
+  const c = actx(); if(!c) return;
+  const t = c.currentTime + (delay || 0);
+  const o = c.createOscillator(), g = c.createGain();
+  o.type = type || 'sine'; o.frequency.setValueAtTime(freq, t);
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(vol || .18, t + .008);
+  g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+  o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + dur + .02);
+}
+function noise(dur, vol){
+  const c = actx(); if(!c) return;
+  const n = Math.floor(c.sampleRate * dur);
+  const buf = c.createBuffer(1, n, c.sampleRate), d = buf.getChannelData(0);
+  for(let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 3);
+  const src = c.createBufferSource(), g = c.createGain();
+  src.buffer = buf; g.gain.value = vol || .18;
+  src.connect(g); g.connect(c.destination); src.start();
+}
+const SFX = {
+  tick:  () => tone(880, .04, 'square', .06),
+  lock:  () => { tone(300, .1, 'square', .12); tone(150, .18, 'sine', .14, .04); },
+  gavel: () => { noise(.14, .22); tone(110, .3, 'sine', .3, .01); tone(70, .4, 'sine', .22, .03); },
+  walk:  () => { tone(260, .12, 'triangle', .12); tone(180, .22, 'triangle', .1, .1); },
+  win:   () => [0,.11,.22,.36].forEach((d,i) => tone([392,494,587,784][i], .3, 'triangle', .16, d)),
+};
+const sfx = k => { if(OPT.sound && SFX[k]) try{ SFX[k](); }catch(e){} };
 
 /* ============================================================
    GAME SETUP
@@ -365,11 +623,12 @@ function startDraft(sportKey){
     si: 0, round: 1, lotNo: 0,
     phase: 'lot',
     lot: null, bids:{p1:null,p2:null}, bidder:null, first:'p1',
-    eligible: ['p1','p2'], reserve: 0, result: null, pending: null,
-    gm:{ p1:{name:'GM 1', cash:CASH, signed:[]}, p2:{name:'GM 2', cash:CASH, signed:[]} },
-    log: [],
+    eligible: ['p1','p2'], reserve: 0, result: null, pending: null, sold: null,
+    gm:{ p1:{name:NAMES.p1 || DEFAULTS.p1, cash:CASH, signed:[]},
+         p2:{name:OPT.solo ? BOT_NAME : (NAMES.p2 || DEFAULTS.p2), cash:CASH, signed:[]} },
+    log: [], scored: false,
   };
-  $('tagline').textContent = `${sport.label} board — ${sport.src}. Grades stay hidden until the gavel drops.`;
+  $('tagline').textContent = `${sport.label} board · ${DIFFS[DIFF].label} · ${sport.src}. Ratings stay hidden until the gavel drops.`;
   openLot();
 }
 
@@ -379,12 +638,36 @@ function openLot(){
   S.lot = drawLot(pos);
   S.lot.buzz = buzzOf(S.lot);
   S.bids = {p1:null,p2:null};
-  S.first = Math.random() < .5 ? 'p1' : 'p2';
+  S.first = OPT.solo ? 'p1' : (Math.random() < .5 ? 'p1' : 'p2');
   S.phase = 'lot';
   render();
 }
 
 const totalOvr = k => S.gm[k].signed.reduce((s,x)=> s + (x ? x.player.ovr : 0), 0);
+const slotsLeft = k => 5 - S.gm[k].signed.filter(Boolean).length;
+
+/* The bot reads exactly what a human reads — buzz stars when they're shown,
+   nothing but the budget on Hard. It never sees the hidden rating. */
+function botBid(k){
+  const g = S.gm[k];
+  const base = g.cash / Math.max(1, slotsLeft(k));
+  const read = scouted() ? .45 + .28 * S.lot.buzz : .9 + Math.random() * .4;
+  return Math.max(0, Math.min(g.cash, Math.round(base * read * (.85 + Math.random() * .35))));
+}
+function botMatch(){
+  const k = S.eligible[0], g = S.gm[k];
+  if(g.cash < S.reserve) return false;
+  if(S.reserve <= FLOOR) return true;
+  /* Everything below is public by now: the sold player's rating was revealed at the
+     gavel, the reserve is on screen, and the walk range is printed for the human too.
+     The bot still never sees the hidden rating of the name it's being offered. */
+  const wr = walkRange(S.slots[S.si].pos, S.sold.ovr);
+  const gain = (S.sold.ovr - 1) - (wr[0] + wr[1]) / 2;      // offer sits within MATCH_SPREAD
+  const perSlot = g.cash / Math.max(1, slotsLeft(k));
+  const strain = S.reserve / Math.max(1, perSlot);           // slot-budgets this costs
+  return gain >= 3 * strain;
+}
+
 const avgOvr = k => {
   const n = S.gm[k].signed.filter(Boolean).length;
   return n ? totalOvr(k)/n : 0;
@@ -397,8 +680,13 @@ const bigAvg = v => { const [a,b] = fmtAvg(v).split('.'); return `${a}<span clas
    ROUND 1 — sealed bids
    ============================================================ */
 function lockBid(val){
+  sfx('lock');
   S.bids[S.bidder] = val;
-  const waiting = S.eligible.find(k => S.bids[k] === null);
+  let waiting = S.eligible.find(k => S.bids[k] === null);
+  while(waiting && isBot(waiting)){            // no handoff screen for the computer
+    S.bids[waiting] = botBid(waiting);
+    waiting = S.eligible.find(k => S.bids[k] === null);
+  }
   if(waiting){ S.phase = 'handoff'; render(); }
   else resolveRound1();
 }
@@ -413,26 +701,30 @@ function resolveRound1(){
   const pos = S.slots[S.si].pos;
 
   if(b1 === 0 && b2 === 0){
-    const w1 = drawWaiver(pos), w2 = drawWaiver(pos);
+    const w1 = drawWaiver(pos), w2 = drawNear(pos, w1.ovr);
     sign('p1', w1, 0, 'waiver'); sign('p2', w2, 0, 'waiver');
     S.result = { type:'nobody', signings:[['p1',w1,0],['p2',w2,0]] };
+    sfx('walk');
     S.log.push({ lot:S.lot, line:'no interest — both to waivers' });
   } else if(b1 === b2){
-    const second = drawLot(pos);
+    const second = drawNear(pos, S.lot.ovr);
     second.buzz = buzzOf(second);
     const order = Math.random() < .5 ? ['p1','p2'] : ['p2','p1'];
     sign(order[0], S.lot, b1, 'split');
     sign(order[1], second, b2, 'split');
     S.result = { type:'split', price:b1, second,
       signings:[[order[0], S.lot, b1],[order[1], second, b2]] };
+    sfx('gavel');
     S.log.push({ lot:S.lot, line:`split decision — both paid $${b1}` });
   } else {
     const win = b1 > b2 ? 'p1' : 'p2', price = Math.max(b1,b2);
     sign(win, S.lot, price, 'won');
     const loser = other(win);
     S.reserve = Math.max(FLOOR, price);
+    S.sold = S.lot;
     S.result = { type:'sold', win, price, loser, signings:[[win, S.lot, price]] };
     S.pending = { loser, reserve:S.reserve };
+    sfx('gavel');
     S.log.push({ lot:S.lot, line:`${S.gm[win].name} — $${price}` });
   }
   S.phase = 'reveal';
@@ -447,9 +739,12 @@ function openMatch(){
   S.pending = null;
   S.round = 2; S.lotNo++;
   S.eligible = [loser];
-  S.lot = drawLot(S.slots[S.si].pos);
+  /* the reserve is priced off the name that just sold, so the offer has to be in the
+     same neighbourhood — otherwise the clause punishes the loser for a bad roll */
+  S.lot = drawNear(S.slots[S.si].pos, S.sold.ovr, MATCH_SPREAD);
   S.lot.buzz = buzzOf(S.lot);
   S.reserve = reserve;
+  if(isBot(loser)) return resolveMatch(botMatch());
   S.phase = S.gm[loser].cash < reserve ? 'nomatch' : 'match';
   render();
 }
@@ -459,11 +754,13 @@ function resolveMatch(matched){
   if(matched){
     sign(k, S.lot, S.reserve, 'matched');
     S.result = { type:'matched', k, price:S.reserve, signings:[[k, S.lot, S.reserve]] };
+    sfx('gavel');
     S.log.push({ lot:S.lot, line:`${S.gm[k].name} matched — $${S.reserve}` });
   } else {
-    const w = drawWaiver(pos);
+    const w = S.sold ? drawWalk(pos, S.sold.ovr) : drawWaiver(pos);
     sign(k, w, 0, 'waiver');
     S.result = { type:'walked', k, signings:[[k, w, 0]] };
+    sfx('walk');
     S.log.push({ lot:S.lot, line:`${S.gm[k].name} walked — waiver pickup` });
   }
   S.phase = 'reveal';
@@ -472,26 +769,93 @@ function resolveMatch(matched){
 
 function advance(){
   if(S.pending){ openMatch(); return; }
-  S.si++; S.round = 1; S.eligible = ['p1','p2']; S.result = null;
-  if(S.si >= S.slots.length){ S.phase = 'end'; render(); }
+  S.si++; S.round = 1; S.eligible = ['p1','p2']; S.result = null; S.sold = null;
+  if(S.si >= S.slots.length){ S.phase = 'end'; scoreSeries(); sfx('win'); render(); }
   else openLot();
+}
+
+function winnerOf(){
+  const a1 = avgOvr('p1'), a2 = avgOvr('p2');
+  if(a1 !== a2) return a1 > a2 ? 'p1' : 'p2';
+  if(S.gm.p1.cash !== S.gm.p2.cash) return S.gm.p1.cash > S.gm.p2.cash ? 'p1' : 'p2';
+  return null;
+}
+function scoreSeries(){
+  if(S.scored) return;
+  S.scored = true;
+  const w = winnerOf();
+  SERIES.n++;
+  if(w) SERIES[w]++;
+}
+function seriesLine(){
+  if(!SERIES.n) return '';
+  const n1 = OPT.solo ? (NAMES.p1 || DEFAULTS.p1) : (NAMES.p1 || DEFAULTS.p1);
+  const n2 = OPT.solo ? BOT_NAME : (NAMES.p2 || DEFAULTS.p2);
+  const draws = SERIES.n - SERIES.p1 - SERIES.p2;
+  return `${esc(n1)} ${SERIES.p1} — ${SERIES.p2} ${esc(n2)}${draws ? ` · ${draws} drawn` : ''}`;
 }
 
 /* ============================================================
    RENDER
    ============================================================ */
 function render(){
+  armedBack = false;
   if(!S){ app.innerHTML = leagueScreen(); return; }
   const v = { lot:lotScreen, bid:bidScreen, handoff:handoffScreen,
               reveal:revealScreen, match:matchScreen, nomatch:matchScreen, end:endScreen };
-  app.innerHTML = `<div class="screen">${v[S.phase]()}</div>`;
+  app.innerHTML = `<div class="screen">${topbar()}${v[S.phase]()}</div>`;
   if(S.phase === 'bid') syncPad();
+}
+
+/* Quitting mid-draft throws the board away, so the button arms on the first tap */
+let armedBack = false;
+function topbar(){
+  if(S.phase === 'end') return '';
+  return `<div class="topbar">
+    <button class="back" data-go="back">&lsaquo; Lobby</button>
+    <span class="ctx">${esc(S.sport.label)} · ${DIFFS[DIFF].label} · slot ${S.si + 1}/5</span>
+  </div>`;
+}
+
+function goHome(){
+  S = null;
+  $('tagline').textContent = 'Sealed bids. Real ratings. No lowballing.';
+  render();
 }
 
 /* ---------- league select ---------- */
 function leagueScreen(){
   return `
   <div class="screen">
+    <div class="setup-lbl">Who's bidding?</div>
+    <div class="names">
+      <label class="nameField p1"><span class="pip"></span>
+        <input id="n1" maxlength="12" value="${esc(NAMES.p1)}" aria-label="First bidder name" spellcheck="false"></label>
+      <span class="vs">vs</span>
+      <label class="nameField p2"><span class="pip"></span>
+        ${OPT.solo
+          ? `<span class="botName">${BOT_NAME}</span>`
+          : `<input id="n2" maxlength="12" value="${esc(NAMES.p2)}" aria-label="Second bidder name" spellcheck="false">`}</label>
+    </div>
+    <div class="setup-lbl">Settings</div>
+    <div class="togs">${TOGGLES.map(t => `
+      <button class="tog ${OPT[t.key] ? 'on' : ''}" data-tog="${t.key}" aria-pressed="${OPT[t.key]}">
+        <span class="tog-lbl">${t.label}</span>
+        <span class="tog-state">${OPT[t.key] ? t.on : t.off}</span>
+      </button>`).join('')}</div>
+    ${OPT.series && SERIES.n ? `
+    <div class="scoreboard">
+      <div class="sb-lbl">Series</div>
+      <div class="sb-line">${seriesLine()}</div>
+      <button class="sb-reset" data-go="resetSeries">Reset record</button>
+    </div>` : ''}
+    <div class="setup-lbl">Board depth</div>
+    <div class="diff">
+      <input type="range" id="diff" min="0" max="2" step="1" value="${DIFF}" aria-label="Difficulty">
+      <div class="diff-stops">${DIFFS.map((d,i)=>`<span class="${i===DIFF?'on':''}">${d.label}</span>`).join('')}</div>
+      <div class="diff-note" id="diffNote">${DIFFS[DIFF].note}</div>
+    </div>
+    <div class="setup-lbl">Pick a board</div>
     <div class="leagues">
       ${Object.entries(SPORTS).map(([k,s]) => `
         <button class="league" data-go="league" data-k="${k}">
@@ -505,9 +869,9 @@ function leagueScreen(){
       <ol>
         <li>$20 each, five roster slots each. One slot on the block at a time.</li>
         <li>Sealed bids. High bid wins and pays it — the loser pays nothing.</li>
-        <li><b>Match clause.</b> Once your rival fills a slot, the next name at that position carries a reserve equal to what they paid (never under $${FLOOR}). Match it or walk — no $1 snipes.</li>
-        <li><b>Walk</b> and you still fill the slot, but off the waiver wire with a replacement-level body. Sometimes that's the right call.</li>
-        <li><b>Split decision.</b> Tie the bid and a second name at that position hits the board — you both pay, you both sign, and the names are dealt at random.</li>
+        <li><b>Match clause.</b> Once your rival fills a slot, the next name at that position is drawn within ${MATCH_SPREAD} overall of theirs and carries a reserve equal to what they paid (never under $${FLOOR}). Match it or walk — no $1 snipes.</li>
+        <li><b>Walk</b> and you still fill the slot for free, but the pickup lands ${WALK_GAP[0]}–${WALK_GAP[1]} overall below the name that just sold. A known cost, never a cliff — and sometimes worth it.</li>
+        <li><b>Split decision.</b> Tie the bid and a second name hits the board within ${SPLIT_TOL} overall of the first — you both pay, you both sign, and the two are dealt at random.</li>
         <li>Bid $0 each and neither of you wants it: both to waivers, free.</li>
         <li>Everyone ends with exactly five. Highest <b>average overall</b> wins; leftover cash breaks a tie.</li>
       </ol>
@@ -520,31 +884,44 @@ function leagueScreen(){
 }
 
 /* ---------- lot ---------- */
+function turnbar(k, sub){
+  return `<div class="turnbar ${k}"><span class="pip"></span><span>${esc(S.gm[k].name)} is up
+    <small>${sub}</small></span></div>`;
+}
+
 function lotScreen(){
-  const up = S.first;
+  const up = S.first, off = other(up);
   return `
     ${railHTML()}
     ${boardHTML()}
+    ${turnbar(up, 'sealed bid · ' + esc(S.gm[off].name) + ' looks away')}
+    <button class="btn as-${up}" data-go="bid" data-k="${up}">${esc(S.gm[up].name)} — enter sealed bid</button>
     ${gmsHTML(up)}
-    <button class="btn" data-go="bid" data-k="${up}">${S.gm[up].name} — enter sealed bid</button>
-    <div class="hint">${S.gm[other(up)].name} looks away. Bids are revealed together.</div>
     ${logHTML()}`;
 }
 
 function railHTML(){
-  return `<div class="rail">${S.slots.map((s,i)=>
-    `<div class="${i < S.si ? 'done' : i === S.si ? 'now' : ''}" title="${esc(S.sport.posLabel[s.pos])}"></div>`).join('')}</div>`;
+  return `<div class="rail">${S.slots.map((s,i)=>{
+    const done = i < S.si, now = i === S.si;
+    const show = OPT.preview || done || now;
+    return `<div class="${done ? 'done' : now ? 'now' : ''}" title="${esc(S.sport.posLabel[s.pos])}">${show ? s.pos : '?'}</div>`;
+  }).join('')}</div>`;
+}
+
+function poolRange(pos){
+  const o = S.pool[pos].map(p => p.ovr);
+  return `pool ${Math.min(...o)}–${Math.max(...o)}`;
 }
 
 function boardHTML(opts){
   opts = opts || {};
   const l = S.lot, sp = S.sport;
-  const tag = opts.reveal ? buzzTag(l, l.buzz) : null;
+  const tag = opts.reveal && scouted() ? buzzTag(l, l.buzz) : null;
   return `
   <div class="board">
     <div class="lotno">LOT ${S.lotNo}</div>
     <div class="round">Slot ${S.si+1} of 5${S.round === 2 ? ' · match clause' : ''}</div>
-    <div class="pos-line">${esc(sp.posLabel[l.pos])}</div>
+    <div class="pos-line">${esc(sp.posLabel[l.pos])}${OPT.ranges ? ` <span class="range">${poolRange(l.pos)}</span>` : ''}</div>
     <div class="p-name">${esc(l.name)}</div>
     <div class="p-team">${esc(l.team)}</div>
     ${opts.reveal ? `
@@ -553,7 +930,9 @@ function boardHTML(opts){
         <span class="ovr-lab">overall<br><span class="tag t-${l.tier}">tier ${l.tier}</span></span>
         ${tag ? `<span class="tag ${tag.cls}">${tag.txt}</span>` : ''}
       </div>`
-    : `<div class="buzz">Scout buzz <span class="stars">${stars(l.buzz)}</span></div>`}
+    : scouted()
+      ? `<div class="buzz">Scout buzz <span class="stars">${stars(l.buzz)}</span></div>`
+      : `<div class="buzz blind">No scouting report — you're on your own</div>`}
   </div>
   ${opts.stamp ? `<div class="stamp-layer"><div class="stamp ${opts.stamp.cls||''}">${opts.stamp.top}<small>${esc(opts.stamp.sub)}</small></div></div>` : ''}`;
 }
@@ -565,10 +944,11 @@ function gmsHTML(up){
   const gap = fmtAvg(Math.abs(a.p1 - a.p2));
   return `<div class="gms">${['p1','p2'].map(k=>{
     const g = S.gm[k], n = g.signed.filter(Boolean).length;
-    return `<div class="gm ${k} ${up === k ? 'up' : ''}">
+    return `<div class="gm ${k} ${up === k ? 'up' : up ? 'off' : ''}">
+      ${up === k ? `<span class="onclock">◀ on the clock ▶</span>` : ''}
       <div class="gm-top">
         <div>
-          <div class="gm-name">${esc(g.name)}</div>
+          <div class="gm-name"><span class="pip"></span>${esc(g.name)}</div>
           <div class="gm-meta">${n}/5 signed${n ? ` · ${totalOvr(k)} total` : ''}</div>
           ${lead === k ? `<span class="lead">leads +${gap}</span>` : ''}
         </div>
@@ -606,9 +986,10 @@ function rosterHTML(k){
 function bidScreen(){
   const g = S.gm[S.bidder];
   return `
-    <div class="pad-head">
-      <div class="pad-who">${esc(g.name)} — sealed bid</div>
-      <div class="pad-sub">${esc(S.lot.name)} · ${esc(S.sport.posLabel[S.lot.pos])}<br>buzz <span class="stars">${stars(S.lot.buzz)}</span></div>
+    <div class="pad-head ${S.bidder}">
+      <div class="pad-who"><span class="pip"></span>${esc(g.name)} — sealed bid</div>
+      <div class="pad-sub">${esc(S.lot.name)} · ${esc(S.sport.posLabel[S.lot.pos])}${
+        scouted() ? `<br>buzz <span class="stars">${stars(S.lot.buzz)}</span>` : ''}</div>
     </div>
     <div class="readout" id="readout"><span class="cap">your bid · $${g.cash} on hand</span><span id="amt">$0</span></div>
     <div class="keys">
@@ -623,6 +1004,7 @@ function bidScreen(){
 
 let padVal = '';
 function padPress(k){
+  sfx('tick');
   const max = S.gm[S.bidder].cash;
   if(k === 'del') padVal = padVal.slice(0,-1);
   else if(k === 'max') padVal = String(max);
@@ -637,8 +1019,8 @@ function syncPad(){ const a = $('amt'); if(a) a.textContent = '$' + (padVal === 
 function handoffScreen(){
   const next = S.eligible.find(k => S.bids[k] === null);
   return `
-    <div class="curtain" data-go="bid" data-k="${next}" tabindex="0">
-      <div class="big">Pass the device<br>to ${esc(S.gm[next].name)}</div>
+    <div class="curtain ${next}" data-go="bid" data-k="${next}" tabindex="0">
+      <div class="big">Pass the device to<br>${esc(S.gm[next].name)}</div>
       <div class="sm">${esc(S.gm[other(next)].name)}'s bid is locked and hidden.</div>
       <div class="tap">Tap when ready</div>
     </div>
@@ -648,9 +1030,12 @@ function handoffScreen(){
 /* ---------- match clause ---------- */
 function matchScreen(){
   const k = S.eligible[0], g = S.gm[k], broke = S.phase === 'nomatch';
+  const wr = walkRange(S.slots[S.si].pos, S.sold.ovr);
+  const walkTxt = wr[0] === wr[1] ? `${wr[0]} overall` : `${wr[0]}–${wr[1]} overall`;
   return `
     ${railHTML()}
     ${boardHTML()}
+    ${turnbar(k, broke ? 'forced walk' : 'match it or walk')}
     <div class="reserve">
       <div class="lbl">Match clause · reserve</div>
       <div class="fig">$${S.reserve}</div>
@@ -665,7 +1050,7 @@ function matchScreen(){
            <button class="btn green" data-go="match">Match $${S.reserve}</button>
            <button class="btn ghost" data-go="walk">Walk to waivers</button>
          </div>`}
-    <div class="hint">${broke ? '' : `Matching leaves ${esc(g.name)} $${g.cash - S.reserve} for the rest of the board.`}</div>
+    <div class="hint">A walk lands around ${walkTxt}.${broke ? '' : ` Matching leaves ${esc(g.name)} $${g.cash - S.reserve} for the rest of the board.`}</div>
     ${logHTML()}`;
 }
 
@@ -680,7 +1065,7 @@ function revealScreen(){
   else { stamp = {top:'WALKED', sub:'waiver wire'}; }
 
   if(r.type === 'sold') head = `<b>${esc(S.gm[r.win].name)}</b> takes ${esc(S.lot.name)} at $${r.price}. ${esc(S.gm[r.loser].name)} now faces a $${Math.max(FLOOR,r.price)} reserve on the next one.`;
-  else if(r.type === 'split') head = `Dead heat at $${r.price}. A second ${esc(S.sport.posLabel[S.lot.pos].toLowerCase())} hit the board and the names were dealt at random — both slots filled.`;
+  else if(r.type === 'split') head = `Dead heat at $${r.price}. A second ${esc(S.sport.posLabel[S.lot.pos].toLowerCase())} hit the board within ${SPLIT_TOL} overall of the first, and the two were dealt at random — both slots filled.`;
   else if(r.type === 'nobody') head = `Nobody bid. Both GMs fill the slot off the waiver wire for free.`;
   else if(r.type === 'matched') head = `<b>${esc(S.gm[r.k].name)}</b> pays the clause and signs ${esc(S.lot.name)}.`;
   else head = `<b>${esc(S.gm[r.k].name)}</b> walks. Slot filled off the scrap heap — cash kept.`;
@@ -694,8 +1079,8 @@ function revealScreen(){
     ${showTickets ? `<div class="tickets">${['p1','p2'].map(k=>{
       const b = S.bids[k] || 0;
       const won = r.type === 'sold' && r.win === k;
-      return `<div class="tk ${won?'win':''}">
-        <div class="who">${esc(S.gm[k].name)}</div>
+      return `<div class="tk ${k} ${won?'win':''}">
+        <div class="who"><span class="pip"></span>${esc(S.gm[k].name)}</div>
         <div class="amt">$${b}</div>
         <div class="note">${won ? 'winning bid' : r.type === 'split' ? 'paid' : b === 0 ? 'passed' : 'no charge'}</div>
       </div>`;}).join('')}</div>` : ''}
@@ -724,15 +1109,17 @@ function logHTML(){
 /* ---------- end ---------- */
 function endScreen(){
   const a1 = avgOvr('p1'), a2 = avgOvr('p2');
-  let line;
-  if(a1 !== a2) line = `${S.gm[a1>a2?'p1':'p2'].name} takes it, ${fmtAvg(Math.max(a1,a2))} to ${fmtAvg(Math.min(a1,a2))} average.`;
-  else if(S.gm.p1.cash !== S.gm.p2.cash) line = `Both squads average ${fmtAvg(a1)} — ${S.gm[S.gm.p1.cash>S.gm.p2.cash?'p1':'p2'].name} wins on leftover cash.`;
-  else line = `${fmtAvg(a1)} apiece, same cash. Split the trophy.`;
+  const onCash = a1 === a2 && S.gm.p1.cash !== S.gm.p2.cash;
+  const win = a1 !== a2 ? (a1 > a2 ? 'p1' : 'p2')
+            : onCash ? (S.gm.p1.cash > S.gm.p2.cash ? 'p1' : 'p2') : null;
+  const margin = a1 !== a2 ? `by ${fmtAvg(Math.abs(a1 - a2))} average overall`
+               : onCash ? `level on ratings — takes it with $${S.gm[win].cash} left over`
+               : `${fmtAvg(a1)} apiece and the same cash left`;
 
   const rows = S.slots.map((s,i)=>{
     const a = S.gm.p1.signed[i], b = S.gm.p2.signed[i];
     const aw = a.player.ovr > b.player.ovr, bw = b.player.ovr > a.player.ovr;
-    const cell = (x,side,win,lose) => `<div class="slotcell ${side} ${win?'won':''} ${lose?'beat':''}">
+    const cell = (x,side,won,lost) => `<div class="slotcell ${side} ${won?'won':''} ${lost?'beat':''}">
         <span class="n">${esc(x.player.name)} <b>${x.player.ovr}</b></span>
         <span class="m">$${x.price}${x.via==='waiver'?' · waiver':x.via==='split'?' · split':x.via==='matched'?' · matched':''}</span>
       </div>`;
@@ -746,9 +1133,19 @@ function endScreen(){
   return `
     <div class="end">
       <h2>Books are closed</h2>
-      <div class="final">${esc(line)}</div>
+      <div class="crown ${win || 'tie'}">
+        <div class="crown-lbl">${win ? 'Winner' : 'Dead heat'}</div>
+        <div class="crown-name">${win ? esc(S.gm[win].name) : 'Split the trophy'}</div>
+        <div class="crown-score">${fmtAvg(Math.max(a1,a2))} <span class="lo">to ${fmtAvg(Math.min(a1,a2))}</span></div>
+        <div class="crown-margin">${margin}</div>
+      </div>
+      ${OPT.series && SERIES.n ? `<div class="sb-strip">Series · ${seriesLine()}</div>` : ''}
       <div class="h2h">
-        <div class="h2h-row head"><div>${esc(S.gm.p1.name)}</div><div class="badge">SLOT</div><div style="text-align:right">${esc(S.gm.p2.name)}</div></div>
+        <div class="h2h-row head">
+          <div class="p1"><span class="pip"></span>${esc(S.gm.p1.name)}</div>
+          <div class="badge">SLOT</div>
+          <div class="p2" style="text-align:right">${esc(S.gm.p2.name)}<span class="pip" style="margin:0 0 0 7px"></span></div>
+        </div>
         ${rows}
         <div class="h2h-row tot">
           <div>${fmtAvg(a1)} avg<span class="m"> · ${totalOvr('p1')} total · $${S.gm.p1.cash} left</span></div>
@@ -758,7 +1155,7 @@ function endScreen(){
       </div>
       <div class="end-btns">
         <button class="btn green" data-go="again">Run it back</button>
-        <button class="btn ghost" data-go="home">Switch league</button>
+        <button class="btn ghost" data-go="home">Change setup</button>
       </div>
     </div>`;
 }
@@ -769,6 +1166,15 @@ function endScreen(){
 app.addEventListener('click', e => {
   const key = e.target.closest('[data-key]');
   if(key){ padPress(key.dataset.key); return; }
+  const tog = e.target.closest('[data-tog]');
+  if(tog){
+    const k = tog.dataset.tog;
+    OPT[k] = !OPT[k];
+    if(k === 'solo'){ SERIES.p1 = SERIES.p2 = SERIES.n = 0; }   // different opponent, fresh record
+    if(k === 'sound' && OPT.sound) sfx('tick');
+    render();
+    return;
+  }
   const el = e.target.closest('[data-go]');
   if(!el) return;
   const go = el.dataset.go;
@@ -779,16 +1185,31 @@ app.addEventListener('click', e => {
   else if(go === 'walk')  resolveMatch(false);
   else if(go === 'next')  advance();
   else if(go === 'again') startDraft(S.sportKey);
-  else if(go === 'home'){ S = null; $('tagline').textContent = 'Sealed bids. Real ratings. No lowballing.'; render(); }
+  else if(go === 'home') goHome();
+  else if(go === 'resetSeries'){ SERIES.p1 = SERIES.p2 = SERIES.n = 0; render(); }
+  else if(go === 'back'){
+    if(armedBack) goHome();
+    else { armedBack = true; el.classList.add('armed'); el.textContent = 'Tap again to quit'; }
+  }
 });
 
 document.addEventListener('keydown', e => {
-  if(S && S.phase === 'bid'){
+  if(S && S.phase === 'bid' && !e.target.closest('.back')){
     if(/^\d$/.test(e.key)){ padPress(e.key); e.preventDefault(); }
     else if(e.key === 'Backspace'){ padPress('del'); e.preventDefault(); }
     else if(e.key === 'Enter'){ lockBid(padVal === '' ? 0 : +padVal); e.preventDefault(); }
   } else if(e.key === 'Enter' && e.target.closest('.curtain')){
     e.target.click();
+  }
+});
+
+app.addEventListener('input', e => {
+  const t = e.target;
+  if(t.id === 'n1' || t.id === 'n2'){ NAMES[t.id === 'n1' ? 'p1' : 'p2'] = t.value.trim().slice(0,12); return; }
+  if(t.id === 'diff'){
+    DIFF = +t.value;
+    const n = $('diffNote'); if(n) n.textContent = DIFFS[DIFF].note;
+    document.querySelectorAll('.diff-stops span').forEach((el,i) => el.classList.toggle('on', i === DIFF));
   }
 });
 
