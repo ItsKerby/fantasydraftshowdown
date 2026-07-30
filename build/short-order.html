@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Short Order — Breadbasement</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F1E6CF; --paper-2:#E7D8B6; --paper-3:#DCC9A0;
+  --ink:#2B211A; --wood:#7A4A2B; --wood-2:#5C3620; --wood-3:#4A2B18;
+  --mustard:#E8A93B; --mustard-2:#A8700F;
+  --pickle:#4E6E58; --pickle-2:#395243;
+  --tomato:#C13B2E; --tomato-2:#9A2C21;
+  --stampblue:#2E4A6B;
+  --r:8px;
+  --display:'Alfa Slab One',Georgia,serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper);
+  background-image:
+    radial-gradient(ellipse at 12% 0%, rgba(122,74,43,.10), transparent 55%),
+    radial-gradient(ellipse at 88% 100%, rgba(78,110,88,.12), transparent 55%),
+    repeating-linear-gradient(0deg, rgba(122,74,43,.028) 0 1px, transparent 1px 3px);
+  color:var(--ink);
+  font-family:'Courier Prime',ui-monospace,monospace;
+  font-size:16px; line-height:1.5;
+  min-height:100dvh; padding:18px 12px 44px;
+  display:flex; justify-content:center;
+  -webkit-tap-highlight-color:transparent;
+}
+.wrap{width:100%;max-width:720px}
+:focus-visible{outline:3px solid var(--stampblue); outline-offset:2px}
+
+.sitenav{display:flex;justify-content:center;margin-bottom:14px}
+.sitenav a{font-family:'Courier Prime',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;
+  text-transform:uppercase;text-decoration:none;color:var(--wood-3);border:3px solid var(--wood-2);
+  border-radius:var(--r);background:var(--paper-2);padding:7px 14px;transition:background .12s}
+.sitenav a:hover{background:var(--mustard);color:var(--ink)}
+
+.mast{text-align:center;margin-bottom:18px}
+.eyebrow{font-size:10.5px;letter-spacing:.28em;text-transform:uppercase;color:var(--wood-2);font-weight:700}
+h1{font-family:var(--display);font-size:clamp(28px,7.5vw,44px);color:var(--pickle-2);
+   text-shadow:2px 2px 0 var(--ink);margin:5px 0;line-height:1}
+.tagline{font-size:13.5px;color:var(--wood-3);line-height:1.5}
+
+.btn{
+  font-family:var(--display);font-size:17px;letter-spacing:.03em;
+  color:var(--paper);background:var(--tomato);border:none;border-radius:var(--r);
+  padding:16px 24px;cursor:pointer;box-shadow:0 4px 0 var(--tomato-2);
+  transition:transform .07s,box-shadow .07s;width:100%;
+}
+.btn:active{transform:translateY(4px);box-shadow:0 0 0 var(--tomato-2)}
+.btn.ghost{background:var(--wood);box-shadow:0 4px 0 var(--wood-2)}
+.btn.green{background:var(--pickle);box-shadow:0 4px 0 var(--pickle-2)}
+.btn.blue{background:var(--stampblue);box-shadow:0 4px 0 #1c2f45}
+.btn.as-p1{background:var(--mustard-2);box-shadow:0 4px 0 #7A5209}
+.btn.as-p2{background:var(--pickle);box-shadow:0 4px 0 var(--pickle-2)}
+.btn:disabled{background:#c4b89b;box-shadow:0 4px 0 #a3977a;color:#7d7259;cursor:not-allowed}
+.btn.sm{font-size:14px;padding:12px 16px}
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+@media(max-width:420px){.btn-row{grid-template-columns:1fr}}
+
+.hint{font-size:12.5px;color:var(--wood-3);text-align:center;margin-top:11px;line-height:1.55}
+.screen{animation:rise .26s cubic-bezier(.2,.9,.3,1)}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.setup-lbl{font-family:var(--display);font-size:13px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--wood-2);text-align:center;margin:0 0 9px}
+.names{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.nameField{display:flex;align-items:center;flex:1;border:4px solid var(--wood-2);border-radius:var(--r);
+  background:var(--paper-2);padding:10px 12px;min-width:0}
+.nameField.p1{box-shadow:inset 0 0 0 3px rgba(232,169,59,.55)}
+.nameField.p2{box-shadow:inset 0 0 0 3px rgba(78,110,88,.5)}
+.nameField input{flex:1;min-width:0;border:none;background:transparent;font-family:var(--display);
+  font-size:19px;color:inherit;padding:0;width:100%}
+.nameField input:focus{outline:none}
+.nameField.p1 input{color:var(--mustard-2)} .nameField.p2 input{color:var(--pickle-2)}
+.vs{font-family:var(--display);font-size:15px;color:var(--wood-2);flex:none}
+.pip{display:inline-block;width:13px;height:13px;border:2px solid var(--ink);border-radius:3px;
+  vertical-align:-1px;margin-right:7px;flex:none}
+.p1 .pip{background:var(--mustard)} .p2 .pip{background:var(--pickle)}
+
+.togs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+@media(max-width:430px){.togs{grid-template-columns:1fr}}
+.tog{border:4px solid var(--wood-2);border-radius:var(--r);background:var(--paper-2);
+  padding:10px 13px;cursor:pointer;text-align:left;font-family:inherit;color:inherit;width:100%;
+  transition:background .12s,border-color .12s}
+.tog.on{border-color:var(--ink);background:var(--mustard)}
+.tog-lbl{display:block;font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--wood-3)}
+.tog-state{display:block;font-family:var(--display);font-size:16px;margin-top:3px}
+
+.rules{border:3px dashed var(--wood);border-radius:var(--r);background:var(--paper-2);padding:16px 18px;margin-top:16px}
+.rules h3{font-family:var(--display);font-size:13px;letter-spacing:.16em;
+  text-transform:uppercase;margin:0 0 10px;color:var(--wood-2)}
+.rules ol{margin:0;padding-left:20px;font-size:13.5px;line-height:1.7}
+.rules li{margin-bottom:5px}
+.rules b{color:var(--tomato-2);font-weight:700}
+
+.rail{display:flex;gap:5px;margin-bottom:12px}
+.rail div{flex:1;border-radius:5px;background:var(--paper-3);border:2px solid var(--wood);
+  font-family:var(--display);font-size:11.5px;text-align:center;padding:5px 0;color:var(--wood-3)}
+.rail div.done{background:var(--pickle);border-color:var(--pickle-2);color:var(--paper)}
+.rail div.now{background:var(--mustard);border-color:var(--ink);color:var(--ink)}
+
+.turnbar{display:flex;align-items:center;justify-content:center;gap:10px;text-align:center;
+  border:4px solid var(--ink);border-radius:var(--r);padding:14px;margin-bottom:12px;
+  font-family:var(--display);font-size:clamp(17px,4.6vw,22px);line-height:1.2}
+.turnbar.p1{background:var(--mustard);color:var(--ink)}
+.turnbar.p2{background:var(--pickle);color:var(--paper)}
+.turnbar.p2 .pip{border-color:var(--paper)}
+.turnbar small{display:block;font-family:'Courier Prime',monospace;font-size:12px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;opacity:.82;margin-top:4px}
+
+.handoff{border:5px solid var(--wood-2);border-radius:var(--r);background:var(--pickle);
+  color:var(--paper);text-align:center;padding:38px 18px 32px;
+  box-shadow:inset 0 0 0 3px rgba(255,255,255,.06),0 6px 0 rgba(0,0,0,.15)}
+.handoff .lbl{font-size:11.5px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:rgba(241,230,207,.72)}
+.handoff .who{font-family:var(--display);font-size:clamp(28px,8vw,44px);line-height:1.08;margin-top:10px}
+.handoff .job{font-size:13.5px;color:rgba(241,230,207,.9);margin-top:12px;line-height:1.6}
+
+/* the word board */
+.board{background:var(--pickle);border:5px solid var(--wood-2);border-radius:var(--r);
+  padding:32px 16px 24px;text-align:center;position:relative;overflow:hidden;
+  box-shadow:inset 0 0 0 3px rgba(255,255,255,.06),0 6px 0 rgba(0,0,0,.15)}
+.board.blue{background:var(--stampblue)}
+.board .lotno,.board .round{position:absolute;top:10px;font-size:11px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;color:rgba(241,230,207,.78)}
+.board .lotno{left:14px;font-family:var(--display);letter-spacing:.1em}
+.board .round{right:14px}
+.cat-line{font-size:12px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--mustard);margin-bottom:10px}
+.the-word{font-family:var(--display);color:var(--paper);font-size:clamp(28px,9vw,46px);line-height:1.06;
+  text-shadow:1px 2px 0 rgba(0,0,0,.22);word-break:break-word}
+.the-clue{font-family:var(--display);color:var(--paper);font-size:clamp(22px,6.4vw,34px);line-height:1.18;
+  text-shadow:1px 2px 0 rgba(0,0,0,.22);word-break:break-word}
+.board .note{font-size:12.5px;color:rgba(241,230,207,.8);margin-top:13px;line-height:1.6}
+
+/* declare buttons */
+.declare{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:16px 0 0}
+@media(max-width:480px){.declare{grid-template-columns:repeat(3,1fr)}}
+.dec{border:4px solid var(--wood-2);border-radius:var(--r);background:var(--paper-2);
+  padding:12px 4px;cursor:pointer;font-family:inherit;color:inherit;text-align:center;
+  transition:transform .1s,background .15s,box-shadow .1s}
+.dec:hover,.dec:focus-visible{transform:translateY(-3px);box-shadow:0 4px 0 var(--wood-2);background:var(--mustard)}
+.dec .n{display:block;font-family:var(--display);font-size:26px;line-height:1}
+.dec .w{display:block;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--wood-3);margin-top:3px}
+.dec .pt{display:block;font-family:var(--display);font-size:13px;color:var(--tomato-2);margin-top:5px}
+
+/* writing */
+.pen{border:4px solid var(--wood-2);border-radius:var(--r);background:var(--paper-2);padding:12px 13px;margin-top:12px}
+.pen textarea{width:100%;border:none;background:transparent;font-family:var(--display);font-size:20px;
+  line-height:1.35;color:var(--ink);resize:none;padding:0;min-height:74px}
+.pen textarea:focus{outline:none}
+.penbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:9px;
+  border-top:1px dotted rgba(122,74,43,.4);padding-top:8px;
+  font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--wood-3)}
+.penbar .count{font-family:var(--display);font-size:17px;letter-spacing:0;text-transform:none}
+.penbar .count.over{color:var(--tomato)}
+.penbar .count.ok{color:var(--pickle-2)}
+
+.guessrow{display:flex;gap:10px;margin-top:12px}
+.guessfield{flex:1;border:4px solid var(--wood-2);border-radius:var(--r);background:var(--paper-2);
+  padding:12px 13px;min-width:0}
+.guessfield input{width:100%;border:none;background:transparent;font-family:var(--display);
+  font-size:20px;color:var(--ink);padding:0}
+.guessfield input:focus{outline:none}
+.guessrow .btn{width:auto;flex:none;padding:14px 20px}
+
+.tries{display:flex;gap:7px;justify-content:center;margin-top:12px}
+.try{width:34px;height:34px;border:3px solid var(--wood-2);border-radius:6px;background:var(--paper-2);
+  display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:15px;color:var(--wood-3)}
+.try.miss{background:var(--tomato);border-color:var(--tomato-2);color:var(--paper)}
+.missed{border:3px solid var(--wood-2);border-radius:var(--r);background:var(--paper-2);padding:10px 13px;
+  margin-top:12px;font-size:13px;color:var(--wood-3);text-align:center}
+.missed s{color:var(--tomato-2)}
+
+.clock{text-align:center;font-family:var(--display);font-size:30px;margin:12px 0 0;color:var(--wood-2)}
+.clock.low{color:var(--tomato)}
+
+.stamp-layer{display:flex;justify-content:center;margin:-20px 0 0;position:relative;z-index:3;pointer-events:none}
+.stamp{font-family:var(--display);font-size:clamp(19px,5.2vw,28px);
+  color:var(--tomato);border:5px solid var(--tomato);border-radius:6px;padding:9px 17px;
+  background:rgba(241,230,207,.97);transform:rotate(-8deg);text-align:center;
+  animation:slam .42s cubic-bezier(.2,1.5,.4,1) both}
+.stamp.green{color:var(--pickle-2);border-color:var(--pickle-2)}
+.stamp.blue{color:var(--stampblue);border-color:var(--stampblue)}
+.stamp.grey{color:var(--wood-3);border-color:var(--wood-3)}
+.stamp small{display:block;font-family:'Courier Prime',monospace;font-size:12.5px;font-weight:700;margin-top:4px}
+@keyframes slam{0%{transform:rotate(-8deg) scale(2.3);opacity:0}55%{transform:rotate(-8deg) scale(.93);opacity:1}100%{transform:rotate(-8deg) scale(1);opacity:1}}
+
+.scores{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.sc{border:4px solid var(--wood-2);border-radius:var(--r);background:var(--paper-2);padding:13px 14px;text-align:center}
+.sc.p1{box-shadow:inset 0 0 0 3px rgba(232,169,59,.55)}
+.sc.p2{box-shadow:inset 0 0 0 3px rgba(78,110,88,.5)}
+.sc.win{border-color:var(--ink);background:#FBEDC8;box-shadow:0 0 0 5px var(--mustard),0 6px 0 rgba(0,0,0,.18)}
+.sc .nm{font-family:var(--display);font-size:16px}
+.sc .pts{font-family:var(--display);font-size:40px;line-height:1;margin-top:5px}
+.sc .u{font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--wood-3)}
+
+.log{border:3px solid var(--wood-2);border-radius:var(--r);background:var(--paper-2);
+  padding:11px 13px;margin-top:14px;font-size:12.5px;line-height:1.75;max-height:220px;overflow:auto}
+.log .row{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dotted rgba(122,74,43,.35);padding:4px 0}
+.log .row:last-child{border-bottom:none}
+.log b{color:var(--wood-2)}
+.log i{color:var(--wood-3);font-style:normal}
+
+.warn{border:4px solid var(--tomato);background:#fff0e8;color:var(--tomato-2);border-radius:var(--r);
+  padding:11px 14px;font-size:13px;text-align:center;margin-top:12px;font-weight:700;line-height:1.5}
+.foot{text-align:center;font-size:11.5px;color:var(--wood-3);margin-top:24px;line-height:1.7}
+.foot a{color:var(--wood-2);font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="sitenav"><a href="index.html">← Breadbasement</a></nav>
+  <header class="mast">
+    <div class="eyebrow">One secret word · however few words you dare</div>
+    <h1>Short Order</h1>
+    <div class="tagline" id="tagline">Say how many words you need. Then need that many.</div>
+  </header>
+
+  <main id="app" aria-live="polite"></main>
+
+  <div class="foot">
+    Hot-seat game — pass the device when the screen tells you to.<br>
+    Part of <a href="index.html">Breadbasement</a>.
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   SHORT ORDER
+   The clue-giver sees a secret word, declares a word budget,
+   then writes a clue inside it. Guesser gets three tries.
+   Points go to the clue-giver — your job is to be understood.
+   ============================================================ */
+
+/* word bank: "answer" or "answer|alt,alt" */
+const BANK = {
+  'EVERYDAY THING': [
+    'umbrella','stapler','mirror','ladder','pillow','shoelace','toothbrush','battery','magnet','candle',
+    'wallet','scissors','envelope','keyboard','headphones','sunglasses','backpack','calculator','blanket','padlock',
+    'thermometer','vacuum|vacuum cleaner','microwave','doorbell','elevator|lift','escalator','mousetrap','hammock','whistle','compass',
+  ],
+  'ANIMAL': [
+    'octopus','penguin','giraffe','hedgehog','jellyfish','bat','sloth','crocodile','flamingo','squirrel',
+    'chameleon','platypus','walrus','beaver','moth','snail','owl','raccoon','dolphin','tarantula',
+    'hummingbird','armadillo','koala','vulture','starfish|sea star','earthworm','peacock','wolf','goldfish','camel',
+  ],
+  'FOOD': [
+    'pickle','avocado','pancake','sushi','popcorn','marshmallow','omelette|omelet','pretzel','cinnamon','ketchup',
+    'watermelon','peanut butter','sourdough','bagel','lasagna','guacamole','fortune cookie','cotton candy','pepperoni','oatmeal',
+    'garlic bread','ice cream','mashed potatoes','burrito','sandwich','waffle','olive','honey','mustard','cereal',
+  ],
+  'PLACE': [
+    'library','airport','desert','volcano','submarine','lighthouse','attic','graveyard','laundromat','treehouse',
+    'aquarium','waterfall','subway|metro','stadium','greenhouse','dungeon','rooftop','pharmacy','glacier','swamp',
+    'parking garage','bowling alley','emergency room','bus stop','museum','island','tunnel','campsite','courtroom','rainforest',
+  ],
+  'SCREEN & SOUND': [
+    'karaoke','soundtrack','cliffhanger','sequel','villain','plot twist','documentary','sitcom','cartoon','horror movie',
+    'subtitle','drum solo','choir','podcast','trailer','stand-up comedy|standup comedy','soap opera','game show','remix','opening credits',
+    'jump scare','laugh track','bass drop','encore','reality show','cameo','montage','lullaby','national anthem','ringtone',
+  ],
+  'SPORT & GAME': [
+    'penalty kick','marathon','referee','chess','dodgeball','skateboard','bowling','tug of war','hide and seek','goalkeeper|goalie',
+    'overtime','underdog','stadium wave|the wave','slam dunk','ping pong|table tennis','arm wrestling','rock paper scissors','hopscotch','tag','home run',
+    'red card','photo finish','trash talk','bench warmer','coin toss','offside','hat trick','sudden death','mascot','trophy',
+  ],
+  'SCHOOL': [
+    'detention','pop quiz','group project','fire drill','cafeteria','substitute teacher|substitute','locker','yearbook','homework','graduation',
+    'field trip','report card','recess','permission slip','hall pass','school bus','science fair','study hall','valedictorian','snow day',
+    'cheat sheet','group chat','vending machine','bell schedule','last period','pep rally','textbook','name tag','assembly','extra credit',
+  ],
+  'JOB': [
+    'dentist','firefighter','plumber','astronaut','lifeguard','barber','archaeologist','translator','janitor','pilot',
+    'bodyguard','beekeeper','stunt double','tattoo artist','librarian','electrician','paramedic','carpenter','detective','farmer',
+    'air traffic controller','lifeguard tower|watchtower','locksmith','sign painter','crossing guard','tour guide','sound engineer','park ranger','auctioneer','ghostwriter',
+  ],
+  'ACTION': [
+    'sneeze','whisper','juggle','tiptoe','procrastinate','eavesdrop','yawn','hitchhike','apologise|apologize','wink',
+    'shrug','faceplant','snore','doodle','flinch','haggle','stretch','sprint','hiccup','panic',
+    'oversleep','interrupt','tickle','pace','celebrate','forget','borrow','trip','stare','ramble',
+  ],
+  'IDEA': [
+    'deja vu|deja-vu','jealousy','luck','nostalgia','revenge','boredom','peer pressure','gravity','superstition','loophole',
+    'privacy','patience','rumour|rumor','inflation','tradition','coincidence','regret','curiosity','deadline','democracy',
+    'karma','stage fright','beginner\'s luck|beginners luck','white lie','inside joke','second chance','head start','bad timing','stubbornness','homesickness',
+  ],
+};
+
+/* declared budget -> points if guessed first try */
+const PAYOUT = { 1:12, 2:9, 3:6, 4:4, 5:3 };
+const TRY_MULT = [1, .6, .3];        // 1st, 2nd, 3rd guess
+const MAX_TRIES = 3;
+const ROUND_OPTS = [4, 6, 8];
+const CLOCK_OPTS = [0, 45, 30];      // 0 = off
+
+const OPT = { sound:true };
+let ROUNDS = 6, CLOCK = 45;
+const DEFAULTS = { p1:'LEFT', p2:'RIGHT' };
+const NAMES = { ...DEFAULTS };
+
+const app = document.getElementById('app');
+const $ = id => document.getElementById(id);
+const other = k => k === 'p1' ? 'p2' : 'p1';
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+let S = null;
+let USED = new Set();     // survives "run it back" so words don't repeat
+let ticker = null;
+
+/* ---------- sound ---------- */
+let AC = null;
+function actx(){
+  if(!OPT.sound) return null;
+  if(!AC){ try{ AC = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ return null; } }
+  if(AC.state === 'suspended') AC.resume();
+  return AC;
+}
+function tone(freq, dur, type, vol, delay){
+  const ac = actx(); if(!ac) return;
+  const t = ac.currentTime + (delay||0);
+  const o = ac.createOscillator(), g = ac.createGain();
+  o.type = type || 'square'; o.frequency.setValueAtTime(freq, t);
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(vol == null ? .12 : vol, t + .012);
+  g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+  o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + dur + .03);
+}
+const SFX = {
+  hit(){ tone(523,.09,'square',.12); tone(784,.09,'square',.12,.08); tone(1046,.2,'square',.12,.16); },
+  ok(){ tone(523,.1,'square',.11); tone(700,.15,'square',.11,.09); },
+  miss(){ tone(180,.2,'sawtooth',.09); },
+  fail(){ tone(200,.16,'sawtooth',.09); tone(140,.3,'sawtooth',.09,.14); },
+  pass(){ tone(392,.1,'triangle',.1); },
+  tick(){ tone(880,.04,'square',.05); },
+};
+
+/* ============================================================
+   WORDS + MATCHING
+   ============================================================ */
+const norm = s => String(s).toLowerCase()
+  .replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();
+const depluralise = w => w.length > 3 && /(?:ies|es|s)$/.test(w)
+  ? w.replace(/ies$/,'y').replace(/es$/,'').replace(/s$/,'') : w;
+const key = s => norm(s).split(' ').map(depluralise).join(' ');
+
+/* clue text keeps apostrophes and hyphens so "don't" and "stand-up" count as one word */
+const cleanClue = s => String(s).replace(/\s+/g,' ').trim();
+const clueWords = s => cleanClue(s).toLowerCase()
+  .replace(/[^a-z0-9'’-]+/g,' ').trim().split(/\s+/).filter(Boolean);
+const bare = w => w.replace(/[^a-z0-9]/g,'');
+
+/* words too common to ban, even when they show up inside an answer */
+const STOP = new Set(['the','a','an','and','or','of','to','in','on','at','for','with','by',
+  'it','is','are','be','as','my','your','you','this','that','from','not','but','so','up','out']);
+
+function drawWord(){
+  const pool = [];
+  for(const c in BANK) for(const raw of BANK[c]) if(!USED.has(raw)) pool.push([c, raw]);
+  if(!pool.length){ USED = new Set(); return drawWord(); }   // whole bank seen — start it over
+  const [cat, raw] = pool[Math.random()*pool.length|0];
+  USED.add(raw);
+  const [main, alts] = raw.split('|');
+  return { cat, word:main, accept:[main, ...(alts ? alts.split(',') : [])] };
+}
+
+function isRight(guess, card){
+  const g = key(guess);
+  if(!g) return false;
+  return card.accept.some(a => key(a) === g);
+}
+
+/* a clue may not contain the answer, or anything built off it */
+function clueProblem(text, card){
+  const words = clueWords(text);
+  if(!words.length) return 'Write something.';
+  if(words.length > S.declared)
+    return `That's ${words.length} words. You said ${S.declared}.`;
+  if(words.some(w => bare(w).length > 18))
+    return 'No smashing words together to beat the count.';
+  const banned = [];
+  card.accept.forEach(a => norm(a).split(' ').forEach(w => {
+    if(w.length > 2 && !STOP.has(w)) banned.push(w);
+  }));
+  for(const raw of words){
+    const w = bare(raw);
+    if(!w) continue;
+    for(const b of banned){
+      const stem = b.slice(0, Math.max(4, Math.ceil(b.length * .7)));
+      const tooClose =
+        w === b ||
+        w.includes(b) ||
+        (w.length >= 4 && b.includes(w)) ||
+        (w.length >= 4 && w.startsWith(stem));
+      if(tooClose) return `"${raw}" is too close to the answer. Find another way in.`;
+    }
+  }
+  return null;
+}
+
+/* ============================================================
+   FLOW
+   ============================================================ */
+const giverOf = r => r % 2 ? 'p1' : 'p2';
+
+function startGame(){
+  const n1 = $('n1'), n2 = $('n2');
+  NAMES.p1 = (n1 && n1.value.trim()) || DEFAULTS.p1;
+  NAMES.p2 = (n2 && n2.value.trim()) || DEFAULTS.p2;
+  USED = new Set();
+  S = {
+    round:1, phase:'handoff', card:null, declared:null, clue:'',
+    guesses:[], solved:false, warn:'', left:CLOCK,
+    score:{p1:0,p2:0}, log:[], name:{...NAMES},
+  };
+  render();
+}
+
+function toDeclare(){
+  S.card = drawWord();
+  S.declared = null; S.clue = ''; S.warn = '';
+  S.phase = 'declare';
+  render();
+}
+
+function declare(n){
+  S.declared = n; S.warn = '';
+  S.phase = 'write';
+  render();
+}
+
+function submitClue(){
+  const ta = $('clue');
+  const text = ta ? ta.value : '';
+  const bad = clueProblem(text, S.card);
+  if(bad){ S.warn = bad; SFX.miss(); S.clue = text; render(); return; }
+  S.clue = cleanClue(text);
+  S.warn = '';
+  S.guesses = []; S.solved = false; S.left = CLOCK;
+  S.phase = 'handoff2';
+  SFX.pass();
+  render();
+}
+
+function scoreFor(declared, tryIndex){
+  return Math.max(1, Math.round(PAYOUT[declared] * TRY_MULT[tryIndex]));
+}
+
+function submitGuess(){
+  const inp = $('guess');
+  const raw = inp ? inp.value.trim() : '';
+  if(!raw) return;
+  const g = giverOf(S.round);
+  if(isRight(raw, S.card)){
+    const pts = scoreFor(S.declared, S.guesses.length);
+    S.score[g] += pts;
+    S.solved = true;
+    finishRound(pts, S.guesses.length + 1, raw);
+    SFX.hit();
+    return;
+  }
+  S.guesses.push(raw);
+  if(S.guesses.length >= MAX_TRIES){ SFX.fail(); finishRound(0, 0, null); return; }
+  SFX.miss();
+  render();
+}
+
+function giveUp(){ SFX.fail(); finishRound(0, 0, null); }
+
+function timeOut(){ SFX.fail(); finishRound(0, 0, null, true); }
+
+function finishRound(pts, onTry, winningGuess, ranOut){
+  stopClock();
+  const g = giverOf(S.round);
+  S.result = { pts, onTry, solved:!!pts, ranOut:!!ranOut, winningGuess };
+  S.log.push({
+    round:S.round, giver:g, word:S.card.word, cat:S.card.cat,
+    declared:S.declared, clue:S.clue, pts, onTry, solved:!!pts, ranOut:!!ranOut,
+  });
+  S.phase = 'result';
+  render();
+}
+
+function nextRound(){
+  if(S.round >= ROUNDS){ S.phase = 'final'; render(); return; }
+  S.round++;
+  S.card = null; S.declared = null; S.clue = ''; S.guesses = [];
+  S.solved = false; S.warn = ''; S.result = null;
+  S.phase = 'handoff';
+  SFX.pass(); render();
+}
+
+function runItBack(){
+  const names = S.name;
+  S = { round:1, phase:'handoff', card:null, declared:null, clue:'', guesses:[],
+        solved:false, warn:'', left:CLOCK, score:{p1:0,p2:0}, log:[], name:names };
+  render();
+}
+
+/* ---------- guess clock ---------- */
+function stopClock(){ if(ticker){ clearInterval(ticker); ticker = null; } }
+function startClock(){
+  stopClock();
+  if(!CLOCK) return;
+  ticker = setInterval(() => {
+    if(S.phase !== 'guess'){ stopClock(); return; }
+    S.left--;
+    const el = $('clock');
+    if(el){
+      el.textContent = S.left + 's';
+      el.className = 'clock' + (S.left <= 10 ? ' low' : '');
+    }
+    if(S.left <= 5 && S.left > 0) SFX.tick();
+    if(S.left <= 0){ stopClock(); timeOut(); }
+  }, 1000);
+}
+
+/* ============================================================
+   SCREENS
+   ============================================================ */
+function railHTML(){
+  let out = '';
+  for(let i = 1; i <= ROUNDS; i++){
+    const cls = i < S.round ? 'done' : i === S.round ? 'now' : '';
+    out += `<div class="${cls}">${i}</div>`;
+  }
+  return `<div class="rail">${out}</div>`;
+}
+
+function lobbyScreen(){
+  return `
+  <div class="screen">
+    <div class="setup-lbl">Who's playing?</div>
+    <div class="names">
+      <label class="nameField p1"><span class="pip"></span>
+        <input id="n1" maxlength="12" value="${esc(NAMES.p1)}" aria-label="First player name" spellcheck="false"></label>
+      <span class="vs">vs</span>
+      <label class="nameField p2"><span class="pip"></span>
+        <input id="n2" maxlength="12" value="${esc(NAMES.p2)}" aria-label="Second player name" spellcheck="false"></label>
+    </div>
+
+    <div class="setup-lbl">Settings</div>
+    <div class="togs">
+      <button class="tog on" data-go="rounds">
+        <span class="tog-lbl">Rounds</span>
+        <span class="tog-state">${ROUNDS} — ${ROUNDS/2} each</span>
+      </button>
+      <button class="tog ${CLOCK ? 'on' : ''}" data-go="clock">
+        <span class="tog-lbl">Guess clock</span>
+        <span class="tog-state">${CLOCK ? CLOCK + ' seconds' : 'Off'}</span>
+      </button>
+      <button class="tog ${OPT.sound ? 'on' : ''}" data-go="sound" aria-pressed="${OPT.sound}">
+        <span class="tog-lbl">Sound</span>
+        <span class="tog-state">${OPT.sound ? 'On' : 'Off'}</span>
+      </button>
+      <button class="tog on" data-go="none" aria-disabled="true">
+        <span class="tog-lbl">Word bank</span>
+        <span class="tog-state">${Object.values(BANK).reduce((n,a)=>n+a.length,0)} words</span>
+      </button>
+    </div>
+
+    <button class="btn green" data-go="start">Take the first order</button>
+    <div class="hint">One device. You'll be told when to hand it over.</div>
+
+    <div class="rules">
+      <h3>House rules</h3>
+      <ol>
+        <li>You get a secret word. Before writing anything, you <b>declare a budget</b> — one to five words.</li>
+        <li>The fewer words you claim, the bigger the payout: <b>one word is 12 points</b>, five words is 3. Then you have to actually do it.</li>
+        <li>Your clue can't contain the answer or anything built off it. The game checks.</li>
+        <li>Your rival gets ${MAX_TRIES} guesses. First guess pays full, second pays 60%, third pays 30%. Miss all three and you get <b>nothing</b>.</li>
+        <li>Points go to the <b>clue-giver</b>, not the guesser — your only job is to be understood. So guess honestly; you're up next.</li>
+      </ol>
+    </div>
+  </div>`;
+}
+
+function handoffScreen(role){
+  const g = giverOf(S.round);
+  const k = role === 'give' ? g : other(g);
+  const job = role === 'give'
+    ? `You're writing this one. You'll see a secret word, then say how few words you need.<br><b>Don't let them see the screen.</b>`
+    : `You're guessing. ${esc(S.name[g])} has written you a clue.${CLOCK ? `<br>You'll have ${CLOCK} seconds and ${MAX_TRIES} guesses.` : `<br>${MAX_TRIES} guesses, no rush.`}`;
+  return `
+  <div class="screen">
+    ${railHTML()}
+    <div class="handoff">
+      <div class="lbl">Round ${S.round} of ${ROUNDS} · pass the device</div>
+      <div class="who">${esc(S.name[k])}</div>
+      <div class="job">${job}</div>
+    </div>
+    <div class="btn-row" style="grid-template-columns:1fr">
+      <button class="btn as-${k}" data-go="${role === 'give' ? 'toDeclare' : 'toGuess'}">I'm ${esc(S.name[k])} — ready</button>
+    </div>
+    <div class="hint">${role === 'give' ? 'Everyone else: look away.' : 'Clue-giver: not a word, not a gesture.'}</div>
+  </div>`;
+}
+
+function declareScreen(){
+  const g = giverOf(S.round);
+  return `
+  <div class="screen">
+    ${railHTML()}
+    <div class="turnbar ${g}"><span class="pip"></span><span>${esc(S.name[g])} — how few words?
+      <small>declare before you write</small></span></div>
+    <div class="board">
+      <div class="lotno">Round ${S.round}</div>
+      <div class="round">${esc(S.card.cat)}</div>
+      <div class="cat-line">Your word is</div>
+      <div class="the-word">${esc(S.card.word.toUpperCase())}</div>
+      <div class="note">Pick a budget. You'll be held to it.</div>
+    </div>
+    <div class="declare">
+      ${[1,2,3,4,5].map(n => `
+        <button class="dec" data-go="dec" data-n="${n}">
+          <span class="n">${n}</span>
+          <span class="w">word${n>1?'s':''}</span>
+          <span class="pt">${PAYOUT[n]} pts</span>
+        </button>`).join('')}
+    </div>
+    <div class="hint">Points shown are for a first-guess hit. Second guess pays 60%, third pays 30%.</div>
+  </div>`;
+}
+
+function writeScreen(){
+  const g = giverOf(S.round);
+  return `
+  <div class="screen">
+    ${railHTML()}
+    <div class="turnbar ${g}"><span class="pip"></span><span>${esc(S.name[g])} — ${S.declared} word${S.declared>1?'s':''}
+      <small>${PAYOUT[S.declared]} points if they get it first try</small></span></div>
+    <div class="board">
+      <div class="lotno">Round ${S.round}</div>
+      <div class="round">${esc(S.card.cat)}</div>
+      <div class="cat-line">Get them to say</div>
+      <div class="the-word">${esc(S.card.word.toUpperCase())}</div>
+    </div>
+    <div class="pen">
+      <textarea id="clue" rows="2" maxlength="160" spellcheck="false"
+        placeholder="your clue…" aria-label="Your clue">${esc(S.clue)}</textarea>
+      <div class="penbar">
+        <span>Budget ${S.declared}</span>
+        <span class="count" id="count">0 / ${S.declared}</span>
+      </div>
+    </div>
+    ${S.warn ? `<div class="warn">${esc(S.warn)}</div>` : ''}
+    <div class="btn-row" style="margin-top:12px">
+      <button class="btn ghost" data-go="reDeclare">Change my budget</button>
+      <button class="btn green" data-go="sendClue">Lock the clue in</button>
+    </div>
+    <div class="hint">No part of the answer, no smashing words together, no gestures later.</div>
+  </div>`;
+}
+
+function guessScreen(){
+  const g = giverOf(S.round), k = other(g);
+  const tries = [];
+  for(let i = 0; i < MAX_TRIES; i++)
+    tries.push(`<div class="try ${i < S.guesses.length ? 'miss' : ''}">${i < S.guesses.length ? '✕' : i+1}</div>`);
+  return `
+  <div class="screen">
+    ${railHTML()}
+    <div class="turnbar ${k}"><span class="pip"></span><span>${esc(S.name[k])} — what is it?
+      <small>${MAX_TRIES - S.guesses.length} guess${MAX_TRIES - S.guesses.length === 1 ? '' : 'es'} left</small></span></div>
+    <div class="board blue">
+      <div class="lotno">Round ${S.round}</div>
+      <div class="round">${esc(S.card.cat)}</div>
+      <div class="cat-line">${S.declared} word${S.declared>1?'s':''} from ${esc(S.name[g])}</div>
+      <div class="the-clue">${esc(S.clue)}</div>
+    </div>
+    ${CLOCK ? `<div class="clock ${S.left <= 10 ? 'low' : ''}" id="clock">${S.left}s</div>` : ''}
+    <div class="guessrow">
+      <label class="guessfield"><input id="guess" maxlength="40" autocomplete="off"
+        spellcheck="false" placeholder="say it" aria-label="Your guess"></label>
+      <button class="btn blue" data-go="sendGuess">Go</button>
+    </div>
+    <div class="tries">${tries.join('')}</div>
+    ${S.guesses.length ? `<div class="missed">Already tried: ${S.guesses.map(x => `<s>${esc(x)}</s>`).join(' · ')}</div>` : ''}
+    <div class="btn-row" style="grid-template-columns:1fr">
+      <button class="btn ghost sm" data-go="giveUp">No idea — show me</button>
+    </div>
+  </div>`;
+}
+
+function resultScreen(){
+  const g = giverOf(S.round), k = other(g);
+  const r = S.result;
+  const stamp = r.solved
+    ? (r.onTry === 1 ? { t:'CLEAN', c:'green', n:`+${r.pts} to ${S.name[g]}` }
+                     : { t:'GOT THERE', c:'blue', n:`+${r.pts} to ${S.name[g]}` })
+    : { t: r.ranOut ? 'TIME' : 'NO SALE', c:'grey', n:'nothing for anyone' };
+  const note = r.solved
+    ? `${esc(S.name[k])} got it on guess ${r.onTry} from ${S.declared} word${S.declared>1?'s':''}.`
+    : r.ranOut ? `The clock beat ${esc(S.name[k])}.`
+               : `${esc(S.name[k])} couldn't get there in ${MAX_TRIES}.`;
+  return `
+  <div class="screen">
+    ${railHTML()}
+    <div class="board">
+      <div class="lotno">Round ${S.round}</div>
+      <div class="round">${esc(S.card.cat)}</div>
+      <div class="cat-line">The word was</div>
+      <div class="the-word">${esc(S.card.word.toUpperCase())}</div>
+      <div class="note">${esc(S.name[g])} said it in ${S.declared}: <b>"${esc(S.clue)}"</b><br>${note}</div>
+    </div>
+    <div class="stamp-layer">
+      <div class="stamp ${stamp.c}">${stamp.t}<small>${esc(stamp.n)}</small></div>
+    </div>
+    ${scoresHTML()}
+    <button class="btn green" data-go="next">${S.round >= ROUNDS ? 'See the final score' : 'Next round →'}</button>
+    ${logHTML()}
+  </div>`;
+}
+
+function scoresHTML(win){
+  const a = S.score.p1, b = S.score.p2;
+  return `<div class="scores">
+    <div class="sc p1 ${win && a > b ? 'win' : ''}"><div class="nm">${esc(S.name.p1)}</div>
+      <div class="pts">${a}</div><div class="u">points</div></div>
+    <div class="sc p2 ${win && b > a ? 'win' : ''}"><div class="nm">${esc(S.name.p2)}</div>
+      <div class="pts">${b}</div><div class="u">points</div></div>
+  </div>`;
+}
+
+function logHTML(){
+  if(!S.log.length) return '';
+  const rows = S.log.slice().reverse().map(e =>
+    `<div class="row"><span><b>${esc(S.name[e.giver])}</b> · ${esc(e.word)} <i>(${e.declared}w)</i></span>
+     <span>${e.solved ? `guess ${e.onTry} · +${e.pts}` : e.ranOut ? 'timed out' : 'no sale'}</span></div>`).join('');
+  return `<div class="log">${rows}</div>`;
+}
+
+function finalScreen(){
+  const a = S.score.p1, b = S.score.p2;
+  const tie = a === b;
+  const w = a > b ? 'p1' : 'p2';
+  const solved = S.log.filter(e => e.solved).length;
+  const tightest = S.log.filter(e => e.solved).sort((x,y) => x.declared - y.declared)[0];
+  return `
+  <div class="screen">
+    <div class="handoff">
+      <div class="lbl">${ROUNDS} rounds · final</div>
+      <div class="who">${tie ? 'DEAD HEAT' : esc(S.name[w])}</div>
+      <div class="job">${tie ? 'Nothing between you.' : `${Math.max(a,b)} points to ${Math.min(a,b)}.`}<br>
+        ${solved} of ${ROUNDS} clues landed.${tightest ? ` Tightest: <b>"${esc(tightest.clue)}"</b> for ${esc(tightest.word)}.` : ''}</div>
+    </div>
+    ${scoresHTML(!tie)}
+    <button class="btn green" data-go="again">Run it back</button>
+    <div class="btn-row">
+      <button class="btn ghost" data-go="home">Change the setup</button>
+      <a class="btn blue" href="index.html" style="display:block;text-align:center;text-decoration:none;padding:16px 24px">Other games</a>
+    </div>
+    ${logHTML()}
+  </div>`;
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function render(){
+  stopClock();
+  if(!S){ app.innerHTML = lobbyScreen(); return; }
+  const p = S.phase;
+  app.innerHTML =
+    p === 'handoff'  ? handoffScreen('give')  :
+    p === 'declare'  ? declareScreen()        :
+    p === 'write'    ? writeScreen()          :
+    p === 'handoff2' ? handoffScreen('guess') :
+    p === 'guess'    ? guessScreen()          :
+    p === 'result'   ? resultScreen()         :
+                       finalScreen();
+
+  if(p === 'write'){
+    const ta = $('clue'), c = $('count');
+    const upd = () => {
+      const n = clueWords(ta.value).length;
+      c.textContent = `${n} / ${S.declared}`;
+      c.className = 'count ' + (n > S.declared ? 'over' : n ? 'ok' : '');
+    };
+    ta.addEventListener('input', upd);
+    ta.addEventListener('keydown', e => {
+      if(e.key === 'Enter'){ e.preventDefault(); submitClue(); }
+    });
+    upd(); ta.focus();
+  }
+  if(p === 'guess'){
+    const inp = $('guess');
+    inp.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); submitGuess(); } });
+    inp.focus();
+    startClock();
+  }
+}
+
+/* ---------- clicks ---------- */
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-go]');
+  if(!t) return;
+  const go = t.dataset.go;
+  const stash = () => {
+    const n1 = $('n1'), n2 = $('n2');
+    if(n1) NAMES.p1 = n1.value.trim() || DEFAULTS.p1;
+    if(n2) NAMES.p2 = n2.value.trim() || DEFAULTS.p2;
+  };
+  if(go === 'none') return;
+  if(go === 'sound'){ OPT.sound = !OPT.sound; stash(); if(OPT.sound) SFX.pass(); render(); return; }
+  if(go === 'rounds'){ ROUNDS = ROUND_OPTS[(ROUND_OPTS.indexOf(ROUNDS)+1) % ROUND_OPTS.length]; stash(); render(); return; }
+  if(go === 'clock'){ CLOCK = CLOCK_OPTS[(CLOCK_OPTS.indexOf(CLOCK)+1) % CLOCK_OPTS.length]; stash(); render(); return; }
+  if(go === 'start'){ actx(); startGame(); return; }
+  if(go === 'toDeclare'){ actx(); toDeclare(); return; }
+  if(go === 'dec'){ declare(+t.dataset.n); return; }
+  if(go === 'reDeclare'){ const ta = $('clue'); S.clue = ta ? ta.value : ''; S.phase = 'declare'; S.warn=''; render(); return; }
+  if(go === 'sendClue'){ submitClue(); return; }
+  if(go === 'toGuess'){ actx(); S.left = CLOCK; S.phase = 'guess'; render(); return; }
+  if(go === 'sendGuess'){ submitGuess(); return; }
+  if(go === 'giveUp'){ giveUp(); return; }
+  if(go === 'next'){ nextRound(); return; }
+  if(go === 'again'){ runItBack(); return; }
+  if(go === 'home'){ stopClock(); S = null; render(); return; }
+});
+
+render();
+</script>
+</body>
+</html>

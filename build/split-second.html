@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Split Second — Breadbasement</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F1E6CF; --paper-2:#E7D8B6; --paper-3:#DCC9A0;
+  --ink:#2B211A; --wood:#7A4A2B; --wood-2:#5C3620; --wood-3:#4A2B18;
+  --mustard:#E8A93B; --mustard-2:#A8700F;
+  --pickle:#4E6E58; --pickle-2:#395243;
+  --tomato:#C13B2E; --tomato-2:#9A2C21;
+  --stampblue:#2E4A6B;
+  --r:8px;
+  --display:'Alfa Slab One',Georgia,serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper);
+  background-image:
+    radial-gradient(ellipse at 12% 0%, rgba(122,74,43,.10), transparent 55%),
+    radial-gradient(ellipse at 88% 100%, rgba(46,74,107,.10), transparent 55%),
+    repeating-linear-gradient(0deg, rgba(122,74,43,.028) 0 1px, transparent 1px 3px);
+  color:var(--ink);
+  font-family:'Courier Prime',ui-monospace,monospace;
+  font-size:16px; line-height:1.5;
+  min-height:100dvh; padding:18px 12px 44px;
+  display:flex; justify-content:center;
+  -webkit-tap-highlight-color:transparent;
+}
+.wrap{width:100%;max-width:720px}
+:focus-visible{outline:3px solid var(--stampblue); outline-offset:2px}
+
+.sitenav{display:flex;justify-content:center;margin-bottom:14px}
+.sitenav a{font-family:'Courier Prime',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;
+  text-transform:uppercase;text-decoration:none;color:var(--wood-3);border:3px solid var(--wood-2);
+  border-radius:var(--r);background:var(--paper-2);padding:7px 14px;transition:background .12s}
+.sitenav a:hover{background:var(--mustard);color:var(--ink)}
+
+.mast{text-align:center;margin-bottom:18px}
+.eyebrow{font-size:10.5px;letter-spacing:.28em;text-transform:uppercase;color:var(--wood-2);font-weight:700}
+h1{font-family:var(--display);font-size:clamp(28px,7.5vw,44px);color:var(--stampblue);
+   text-shadow:2px 2px 0 var(--ink);margin:5px 0;line-height:1}
+.tagline{font-size:13.5px;color:var(--wood-3);line-height:1.5}
+
+.btn{
+  font-family:var(--display);font-size:17px;letter-spacing:.03em;
+  color:var(--paper);background:var(--tomato);border:none;border-radius:var(--r);
+  padding:16px 24px;cursor:pointer;box-shadow:0 4px 0 var(--tomato-2);
+  transition:transform .07s,box-shadow .07s;width:100%;
+}
+.btn:active{transform:translateY(4px);box-shadow:0 0 0 var(--tomato-2)}
+.btn.ghost{background:var(--wood);box-shadow:0 4px 0 var(--wood-2)}
+.btn.green{background:var(--pickle);box-shadow:0 4px 0 var(--pickle-2)}
+.btn.blue{background:var(--stampblue);box-shadow:0 4px 0 #1c2f45}
+.btn.as-p1{background:var(--mustard-2);box-shadow:0 4px 0 #7A5209}
+.btn.as-p2{background:var(--pickle);box-shadow:0 4px 0 var(--pickle-2)}
+.btn:disabled{background:#c4b89b;box-shadow:0 4px 0 #a3977a;color:#7d7259;cursor:not-allowed}
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+@media(max-width:420px){.btn-row{grid-template-columns:1fr}}
+
+.hint{font-size:12.5px;color:var(--wood-3);text-align:center;margin-top:11px;line-height:1.55}
+.screen{animation:rise .26s cubic-bezier(.2,.9,.3,1)}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.setup-lbl{font-family:var(--display);font-size:13px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--wood-2);text-align:center;margin:0 0 9px}
+.names{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.nameField{display:flex;align-items:center;flex:1;border:4px solid var(--wood-2);border-radius:var(--r);
+  background:var(--paper-2);padding:10px 12px;min-width:0}
+.nameField.p1{box-shadow:inset 0 0 0 3px rgba(232,169,59,.55)}
+.nameField.p2{box-shadow:inset 0 0 0 3px rgba(78,110,88,.5)}
+.nameField input{flex:1;min-width:0;border:none;background:transparent;font-family:var(--display);
+  font-size:19px;color:inherit;padding:0;width:100%}
+.nameField input:focus{outline:none}
+.nameField.p1 input{color:var(--mustard-2)} .nameField.p2 input{color:var(--pickle-2)}
+.vs{font-family:var(--display);font-size:15px;color:var(--wood-2);flex:none}
+.pip{display:inline-block;width:13px;height:13px;border:2px solid var(--ink);border-radius:3px;
+  vertical-align:-1px;margin-right:7px;flex:none}
+.p1 .pip{background:var(--mustard)} .p2 .pip{background:var(--pickle)}
+
+.togs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+@media(max-width:430px){.togs{grid-template-columns:1fr}}
+.tog{border:4px solid var(--wood-2);border-radius:var(--r);background:var(--paper-2);
+  padding:10px 13px;cursor:pointer;text-align:left;font-family:inherit;color:inherit;width:100%;
+  transition:background .12s,border-color .12s}
+.tog.on{border-color:var(--ink);background:var(--mustard)}
+.tog-lbl{display:block;font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--wood-3)}
+.tog.on .tog-lbl{color:var(--wood-3)}
+.tog-state{display:block;font-family:var(--display);font-size:16px;margin-top:3px}
+
+.rules{border:3px dashed var(--wood);border-radius:var(--r);background:var(--paper-2);padding:16px 18px;margin-top:16px}
+.rules h3{font-family:var(--display);font-size:13px;letter-spacing:.16em;
+  text-transform:uppercase;margin:0 0 10px;color:var(--wood-2)}
+.rules ol{margin:0;padding-left:20px;font-size:13.5px;line-height:1.7}
+.rules li{margin-bottom:5px}
+.rules b{color:var(--tomato-2);font-weight:700}
+
+/* rail */
+.rail{display:flex;gap:5px;margin-bottom:12px}
+.rail div{flex:1;border-radius:5px;background:var(--paper-3);border:2px solid var(--wood);
+  font-family:var(--display);font-size:11.5px;text-align:center;padding:5px 0;color:var(--wood-3)}
+.rail div.done{background:var(--pickle);border-color:var(--pickle-2);color:var(--paper)}
+.rail div.now{background:var(--mustard);border-color:var(--ink);color:var(--ink)}
+
+/* turn banner */
+.turnbar{display:flex;align-items:center;justify-content:center;gap:10px;text-align:center;
+  border:4px solid var(--ink);border-radius:var(--r);padding:14px;margin-bottom:12px;
+  font-family:var(--display);font-size:clamp(17px,4.6vw,22px);line-height:1.2}
+.turnbar.p1{background:var(--mustard);color:var(--ink)}
+.turnbar.p2{background:var(--pickle);color:var(--paper)}
+.turnbar.p2 .pip{border-color:var(--paper)}
+.turnbar small{display:block;font-family:'Courier Prime',monospace;font-size:12px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;opacity:.82;margin-top:4px}
+
+/* handoff card */
+.handoff{border:5px solid var(--wood-2);border-radius:var(--r);background:var(--pickle);
+  color:var(--paper);text-align:center;padding:38px 18px 32px;
+  box-shadow:inset 0 0 0 3px rgba(255,255,255,.06),0 6px 0 rgba(0,0,0,.15)}
+.handoff .lbl{font-size:11.5px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;
+  color:rgba(241,230,207,.72)}
+.handoff .who{font-family:var(--display);font-size:clamp(28px,8vw,44px);line-height:1.08;margin-top:10px}
+.handoff .job{font-size:13.5px;color:rgba(241,230,207,.9);margin-top:12px;line-height:1.6}
+
+/* hold pad */
+.pad{
+  width:100%;border:6px solid var(--ink);border-radius:14px;background:var(--paper-2);
+  padding:0;cursor:pointer;font-family:inherit;color:inherit;display:block;
+  height:min(46vh,320px);position:relative;overflow:hidden;
+  user-select:none;-webkit-user-select:none;touch-action:none;
+  box-shadow:0 7px 0 rgba(0,0,0,.2);transition:background .1s,transform .07s,box-shadow .07s;
+}
+.pad .padin{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:9px;padding:16px;text-align:center}
+.pad .big{font-family:var(--display);font-size:clamp(26px,8vw,42px);line-height:1.06}
+.pad .sm{font-size:12.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--wood-3)}
+.pad.holding{background:var(--mustard);transform:translateY(6px);box-shadow:0 1px 0 rgba(0,0,0,.2)}
+.pad.holding .sm{color:var(--wood-3)}
+.pad.done{background:var(--paper-3);cursor:default}
+.pulse{width:74px;height:74px;border-radius:50%;border:6px solid var(--ink);background:var(--tomato)}
+.pad.holding .pulse{background:var(--pickle);animation:breathe 1.6s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+
+/* reveal board */
+.board{background:var(--pickle);border:5px solid var(--wood-2);border-radius:var(--r);
+  padding:30px 16px 22px;text-align:center;position:relative;overflow:hidden;
+  box-shadow:inset 0 0 0 3px rgba(255,255,255,.06),0 6px 0 rgba(0,0,0,.15)}
+.board .lotno,.board .round{position:absolute;top:10px;font-size:11px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;color:rgba(241,230,207,.78)}
+.board .lotno{left:14px;font-family:var(--display);letter-spacing:.1em}
+.board .round{right:14px}
+.gap-lab{font-size:12px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--mustard);margin-bottom:8px}
+.gap-num{font-family:var(--display);color:var(--paper);font-size:clamp(40px,13vw,70px);line-height:1;
+  text-shadow:1px 2px 0 rgba(0,0,0,.22)}
+.gap-num span{font-size:.42em}
+.gap-dir{font-size:13.5px;color:rgba(241,230,207,.88);margin-top:9px}
+
+.times{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.tcard{border:4px solid var(--wood-2);border-radius:var(--r);background:var(--paper-2);padding:12px 13px}
+.tcard.p1{box-shadow:inset 0 0 0 3px rgba(232,169,59,.55)}
+.tcard.p2{box-shadow:inset 0 0 0 3px rgba(78,110,88,.5)}
+.tcard .r{font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--wood-3)}
+.tcard .n{font-family:var(--display);font-size:15px;margin:3px 0 6px;display:flex;align-items:center}
+.tcard .t{font-family:var(--display);font-size:30px;line-height:1}
+.tcard .t span{font-size:.5em}
+
+/* stamp */
+.stamp-layer{display:flex;justify-content:center;margin:-20px 0 0;position:relative;z-index:3;pointer-events:none}
+.stamp{font-family:var(--display);font-size:clamp(19px,5.2vw,28px);
+  color:var(--tomato);border:5px solid var(--tomato);border-radius:6px;padding:9px 17px;
+  background:rgba(241,230,207,.97);transform:rotate(-8deg);text-align:center;
+  animation:slam .42s cubic-bezier(.2,1.5,.4,1) both}
+.stamp.green{color:var(--pickle-2);border-color:var(--pickle-2)}
+.stamp.blue{color:var(--stampblue);border-color:var(--stampblue)}
+.stamp.grey{color:var(--wood-3);border-color:var(--wood-3)}
+.stamp small{display:block;font-family:'Courier Prime',monospace;font-size:12.5px;font-weight:700;margin-top:4px}
+@keyframes slam{0%{transform:rotate(-8deg) scale(2.3);opacity:0}55%{transform:rotate(-8deg) scale(.93);opacity:1}100%{transform:rotate(-8deg) scale(1);opacity:1}}
+
+/* scoreboard */
+.scores{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.sc{border:4px solid var(--wood-2);border-radius:var(--r);background:var(--paper-2);padding:13px 14px;text-align:center}
+.sc.p1{box-shadow:inset 0 0 0 3px rgba(232,169,59,.55)}
+.sc.p2{box-shadow:inset 0 0 0 3px rgba(78,110,88,.5)}
+.sc.win{border-color:var(--ink);background:#FBEDC8;box-shadow:0 0 0 5px var(--mustard),0 6px 0 rgba(0,0,0,.18)}
+.sc .nm{font-family:var(--display);font-size:16px}
+.sc .pts{font-family:var(--display);font-size:40px;line-height:1;margin-top:5px}
+.sc .u{font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--wood-3)}
+
+.log{border:3px solid var(--wood-2);border-radius:var(--r);background:var(--paper-2);
+  padding:11px 13px;margin-top:14px;font-size:12.5px;line-height:1.75;max-height:210px;overflow:auto}
+.log .row{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dotted rgba(122,74,43,.35);padding:3px 0}
+.log .row:last-child{border-bottom:none}
+.log b{color:var(--wood-2)}
+
+.warn{border:4px solid var(--tomato);background:#fff0e8;color:var(--tomato-2);border-radius:var(--r);
+  padding:11px 14px;font-size:13px;text-align:center;margin-bottom:12px;font-weight:700}
+.foot{text-align:center;font-size:11.5px;color:var(--wood-3);margin-top:24px;line-height:1.7}
+.foot a{color:var(--wood-2);font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="sitenav"><a href="index.html">← Breadbasement</a></nav>
+  <header class="mast">
+    <div class="eyebrow">Two thumbs · one stopwatch · no peeking</div>
+    <h1>Split Second</h1>
+    <div class="tagline" id="tagline">Hold it for as long as you like. Now make them do it again.</div>
+  </header>
+
+  <main id="app" aria-live="polite"></main>
+
+  <div class="foot">
+    Hot-seat game — pass the device when the screen tells you to.<br>
+    Part of <a href="index.html">Breadbasement</a>.
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   SPLIT SECOND
+   P1 holds a button for a length of their choosing. P2 has to
+   reproduce it blind. Points go to whoever is matching. Roles
+   swap every round, so both of you match the same number of times.
+   ============================================================ */
+
+const MIN_MS = 600;     // anything shorter is a twitch, not a choice
+const MAX_MS = 12000;   // anything longer is just boring
+const ROUND_OPTS = [4, 6, 8];
+
+/* gap (ms) -> points + stamp */
+const BANDS = [
+  { max:   60, pts:100, tag:'DEAD EVEN',    stamp:'green', note:'Nothing between you.' },
+  { max:  150, pts: 75, tag:'RAZOR THIN',   stamp:'green', note:'That is a real skill.' },
+  { max:  300, pts: 55, tag:'CLOSE',        stamp:'blue',  note:'Well inside a blink.' },
+  { max:  600, pts: 35, tag:'IN THE AREA',  stamp:'blue',  note:'Respectable.' },
+  { max: 1000, pts: 15, tag:'OFF',          stamp:'',      note:'A full second is a long time.' },
+  { max: 2000, pts:  5, tag:'WAY OFF',      stamp:'',      note:'Were you even trying?' },
+  { max: Infinity, pts: 0, tag:'NOT CLOSE', stamp:'grey',  note:'Zero. Take the walk of shame.' },
+];
+const bandFor = gap => BANDS.find(b => gap <= b.max);
+
+const OPT = { sound:true };
+const DEFAULTS = { p1:'LEFT', p2:'RIGHT' };
+const NAMES = { ...DEFAULTS };
+let ROUNDS = 6;
+
+const app = document.getElementById('app');
+const $ = id => document.getElementById(id);
+const other = k => k === 'p1' ? 'p2' : 'p1';
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt = ms => (ms/1000).toFixed(2);
+
+let S = null;   // null = lobby
+
+/* ---------- sound ---------- */
+let AC = null;
+function actx(){
+  if(!OPT.sound) return null;
+  if(!AC){ try{ AC = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ return null; } }
+  if(AC.state === 'suspended') AC.resume();
+  return AC;
+}
+function tone(freq, dur, type, vol, delay){
+  const ac = actx(); if(!ac) return;
+  const t = ac.currentTime + (delay||0);
+  const o = ac.createOscillator(), g = ac.createGain();
+  o.type = type || 'square'; o.frequency.setValueAtTime(freq, t);
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(vol == null ? .12 : vol, t + .012);
+  g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+  o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + dur + .03);
+}
+const SFX = {
+  down(){ tone(330, .09, 'square', .10); },
+  up(){ tone(220, .13, 'square', .10); },
+  good(){ tone(523, .10, 'square', .11); tone(784, .16, 'square', .11, .09); },
+  great(){ tone(523,.09,'square',.12); tone(784,.09,'square',.12,.08); tone(1046,.22,'square',.12,.16); },
+  bad(){ tone(150, .26, 'sawtooth', .09); },
+  pass(){ tone(392, .10, 'triangle', .10); },
+};
+
+/* ============================================================
+   GAME FLOW
+   ============================================================ */
+function startGame(){
+  const n1 = $('n1'), n2 = $('n2');
+  NAMES.p1 = (n1 && n1.value.trim()) || DEFAULTS.p1;
+  NAMES.p2 = (n2 && n2.value.trim()) || DEFAULTS.p2;
+  S = {
+    round: 1,
+    phase: 'handoff',      // handoff | set | handoff2 | match | reveal
+    target: null,
+    attempt: null,
+    warn: '',
+    score: { p1:0, p2:0 },
+    log: [],
+    name: { p1:NAMES.p1, p2:NAMES.p2 },
+  };
+  render();
+}
+const setterOf = r => r % 2 ? 'p1' : 'p2';
+const matcherOf = r => other(setterOf(r));
+
+function recordSet(ms){
+  if(ms < MIN_MS || ms > MAX_MS){
+    S.warn = ms < MIN_MS
+      ? `That was ${fmt(ms)}s. Give them something to work with — at least ${fmt(MIN_MS)}s.`
+      : `That was ${fmt(ms)}s. Keep it under ${Math.round(MAX_MS/1000)}s or we'll be here all lunch.`;
+    SFX.bad(); render(); return;
+  }
+  S.warn = ''; S.target = ms; S.phase = 'handoff2';
+  SFX.up(); render();
+}
+
+function recordMatch(ms){
+  S.attempt = ms;
+  const gap = Math.abs(ms - S.target);
+  const band = bandFor(gap);
+  const m = matcherOf(S.round);
+  S.score[m] += band.pts;
+  S.log.push({ round:S.round, matcher:m, target:S.target, attempt:ms, gap, pts:band.pts, tag:band.tag });
+  S.phase = 'reveal';
+  if(band.pts >= 75) SFX.great(); else if(band.pts >= 35) SFX.good(); else SFX.bad();
+  render();
+}
+
+function nextRound(){
+  if(S.round >= ROUNDS){ S.phase = 'final'; render(); return; }
+  S.round++; S.target = null; S.attempt = null; S.warn = '';
+  S.phase = 'handoff';
+  SFX.pass(); render();
+}
+
+function runItBack(){
+  const names = S.name;
+  S = { round:1, phase:'handoff', target:null, attempt:null, warn:'',
+        score:{p1:0,p2:0}, log:[], name:names };
+  render();
+}
+
+/* ============================================================
+   SCREENS
+   ============================================================ */
+function railHTML(){
+  let out = '';
+  for(let i = 1; i <= ROUNDS; i++){
+    const cls = i < S.round ? 'done' : i === S.round ? 'now' : '';
+    out += `<div class="${cls}">${i}</div>`;
+  }
+  return `<div class="rail">${out}</div>`;
+}
+
+function lobbyScreen(){
+  return `
+  <div class="screen">
+    <div class="setup-lbl">Who's playing?</div>
+    <div class="names">
+      <label class="nameField p1"><span class="pip"></span>
+        <input id="n1" maxlength="12" value="${esc(NAMES.p1)}" aria-label="First player name" spellcheck="false"></label>
+      <span class="vs">vs</span>
+      <label class="nameField p2"><span class="pip"></span>
+        <input id="n2" maxlength="12" value="${esc(NAMES.p2)}" aria-label="Second player name" spellcheck="false"></label>
+    </div>
+
+    <div class="setup-lbl">Settings</div>
+    <div class="togs">
+      <button class="tog ${ROUNDS ? 'on' : ''}" data-go="rounds">
+        <span class="tog-lbl">Rounds</span>
+        <span class="tog-state">${ROUNDS} — ${ROUNDS/2} each</span>
+      </button>
+      <button class="tog ${OPT.sound ? 'on' : ''}" data-go="sound" aria-pressed="${OPT.sound}">
+        <span class="tog-lbl">Sound</span>
+        <span class="tog-state">${OPT.sound ? 'On' : 'Off'}</span>
+      </button>
+    </div>
+
+    <button class="btn blue" data-go="start">Start the clock</button>
+    <div class="hint">One device. You'll be told when to hand it over.</div>
+
+    <div class="rules">
+      <h3>House rules</h3>
+      <ol>
+        <li>The <b>setter</b> holds the pad for however long they want — between ${fmt(MIN_MS)}s and ${Math.round(MAX_MS/1000)}s. Nobody sees the number.</li>
+        <li>The <b>matcher</b> gets the device and has to hold it for exactly that long. No clock, no counting out loud, no tapping your leg where they can see.</li>
+        <li>Points go to the matcher, on a sliding scale: dead even is <b>100</b>, a full second out is <b>15</b>, two seconds out is nothing.</li>
+        <li>Roles swap every round, so you each match ${ROUNDS/2} times. Most points wins.</li>
+        <li>Setting a stupid length is allowed. Setting the <em>same</em> length twice is how you get read.</li>
+      </ol>
+    </div>
+  </div>`;
+}
+
+function handoffScreen(role){
+  const k = role === 'set' ? setterOf(S.round) : matcherOf(S.round);
+  const nm = S.name[k];
+  const job = role === 'set'
+    ? `You're setting this one. Pick a length in your head, hold the pad for it, let go.<br><b>Don't say the number out loud.</b>`
+    : `You're matching. ${esc(S.name[other(k)])} just held the pad for something. Hold it for the same.`;
+  return `
+  <div class="screen">
+    ${railHTML()}
+    <div class="handoff">
+      <div class="lbl">Round ${S.round} of ${ROUNDS} · pass the device</div>
+      <div class="who">${esc(nm)}</div>
+      <div class="job">${job}</div>
+    </div>
+    <div class="btn-row" style="grid-template-columns:1fr">
+      <button class="btn as-${k}" data-go="${role === 'set' ? 'toSet' : 'toMatch'}">I'm ${esc(nm)} — ready</button>
+    </div>
+    <div class="hint">${role === 'set'
+      ? 'Everyone else: look away.'
+      : 'Setter: no coaching, no nodding, no lip-syncing.'}</div>
+  </div>`;
+}
+
+function padScreen(role){
+  const k = role === 'set' ? setterOf(S.round) : matcherOf(S.round);
+  const sub = role === 'set' ? 'set the length' : 'match it';
+  return `
+  <div class="screen">
+    ${railHTML()}
+    ${S.warn ? `<div class="warn">${S.warn}</div>` : ''}
+    <div class="turnbar ${k}"><span class="pip"></span><span>${esc(S.name[k])} — ${sub}
+      <small>press and hold · release when done</small></span></div>
+    <button class="pad" id="pad" aria-label="Press and hold">
+      <div class="padin">
+        <div class="pulse"></div>
+        <div class="big" id="padBig">HOLD</div>
+        <div class="sm" id="padSm">press and hold the pad</div>
+      </div>
+    </button>
+    <div class="hint">Spacebar works too. There is no clock on this screen — that's the whole game.</div>
+  </div>`;
+}
+
+function revealScreen(){
+  const m = matcherOf(S.round), s = setterOf(S.round);
+  const gap = Math.abs(S.attempt - S.target);
+  const band = bandFor(gap);
+  const early = S.attempt < S.target;
+  return `
+  <div class="screen">
+    ${railHTML()}
+    <div class="board">
+      <div class="lotno">Round ${S.round}</div>
+      <div class="round">${band.pts} pts</div>
+      <div class="gap-lab">The gap</div>
+      <div class="gap-num">${fmt(gap)}<span>s</span></div>
+      <div class="gap-dir">${esc(S.name[m])} let go ${fmt(gap)}s ${early ? 'early' : 'late'}. ${band.note}</div>
+    </div>
+    <div class="stamp-layer">
+      <div class="stamp ${band.stamp}">${band.tag}<small>+${band.pts} to ${esc(S.name[m])}</small></div>
+    </div>
+
+    <div class="times">
+      <div class="tcard ${s}">
+        <div class="r">Set by</div>
+        <div class="n"><span class="pip"></span>${esc(S.name[s])}</div>
+        <div class="t">${fmt(S.target)}<span>s</span></div>
+      </div>
+      <div class="tcard ${m}">
+        <div class="r">Matched by</div>
+        <div class="n"><span class="pip"></span>${esc(S.name[m])}</div>
+        <div class="t">${fmt(S.attempt)}<span>s</span></div>
+      </div>
+    </div>
+
+    ${scoresHTML()}
+
+    <button class="btn blue" data-go="next">${S.round >= ROUNDS ? 'See the final score' : 'Next round →'}</button>
+    ${logHTML()}
+  </div>`;
+}
+
+function scoresHTML(win){
+  const a = S.score.p1, b = S.score.p2;
+  const w1 = win && a > b, w2 = win && b > a;
+  return `<div class="scores">
+    <div class="sc p1 ${w1 ? 'win' : ''}"><div class="nm">${esc(S.name.p1)}</div>
+      <div class="pts">${a}</div><div class="u">points</div></div>
+    <div class="sc p2 ${w2 ? 'win' : ''}"><div class="nm">${esc(S.name.p2)}</div>
+      <div class="pts">${b}</div><div class="u">points</div></div>
+  </div>`;
+}
+
+function logHTML(){
+  if(!S.log.length) return '';
+  const rows = S.log.slice().reverse().map(e =>
+    `<div class="row"><span>R${e.round} · <b>${esc(S.name[e.matcher])}</b> off by ${fmt(e.gap)}s</span>
+     <span>${e.tag} · +${e.pts}</span></div>`).join('');
+  return `<div class="log">${rows}</div>`;
+}
+
+function finalScreen(){
+  const a = S.score.p1, b = S.score.p2;
+  const tie = a === b;
+  const w = a > b ? 'p1' : 'p2';
+  /* tiebreak: smallest single gap */
+  let sub = '';
+  if(tie){
+    const best = k => Math.min(...S.log.filter(e => e.matcher === k).map(e => e.gap));
+    const ba = best('p1'), bb = best('p2');
+    sub = ba === bb ? 'Dead level, right down to the best single round.'
+      : `Tied on points — ${esc(S.name[ba < bb ? 'p1' : 'p2'])} takes it on the closest single round (${fmt(Math.min(ba,bb))}s).`;
+  }
+  const realWinner = tie ? null : w;
+  return `
+  <div class="screen">
+    <div class="handoff">
+      <div class="lbl">${ROUNDS} rounds · final</div>
+      <div class="who">${tie ? 'DEAD HEAT' : esc(S.name[realWinner])}</div>
+      <div class="job">${tie ? sub : `${a > b ? a : b} points to ${a > b ? b : a}.`}</div>
+    </div>
+    ${scoresHTML(!tie)}
+    <button class="btn blue" data-go="again">Run it back</button>
+    <div class="btn-row">
+      <button class="btn ghost" data-go="home">Change the setup</button>
+      <a class="btn green" href="index.html" style="display:block;text-align:center;text-decoration:none;padding:16px 24px">Other games</a>
+    </div>
+    ${logHTML()}
+  </div>`;
+}
+
+/* ============================================================
+   RENDER + HOLD WIRING
+   ============================================================ */
+function render(){
+  if(!S){ app.innerHTML = lobbyScreen(); wire(); return; }
+  const p = S.phase;
+  app.innerHTML =
+    p === 'handoff'  ? handoffScreen('set')   :
+    p === 'set'      ? padScreen('set')       :
+    p === 'handoff2' ? handoffScreen('match') :
+    p === 'match'    ? padScreen('match')     :
+    p === 'reveal'   ? revealScreen()         :
+                       finalScreen();
+  wire();
+}
+
+let holdStart = null;
+let padCtl = null;
+function wire(){
+  /* drop any listeners left over from the previous screen */
+  if(padCtl){ padCtl.abort(); padCtl = null; }
+  holdStart = null;
+  const pad = $('pad');
+  if(!pad) return;
+  padCtl = new AbortController();
+  const sig = { signal: padCtl.signal };
+  const big = $('padBig'), sm = $('padSm');
+  let armed = true;
+
+  const begin = e => {
+    if(!armed || holdStart !== null) return;
+    if(e && e.preventDefault) e.preventDefault();
+    holdStart = performance.now();
+    pad.classList.add('holding');
+    big.textContent = 'HOLDING';
+    sm.textContent = 'let go when it feels right';
+    SFX.down();
+  };
+  const end = () => {
+    if(holdStart === null) return;
+    const ms = performance.now() - holdStart;
+    holdStart = null; armed = false;
+    pad.classList.remove('holding');
+    pad.classList.add('done');
+    big.textContent = 'LOCKED';
+    sm.textContent = 'no takebacks';
+    if(S.phase === 'set') recordSet(ms); else recordMatch(ms);
+  };
+
+  pad.addEventListener('pointerdown', begin, sig);
+  window.addEventListener('pointerup', end, sig);
+  window.addEventListener('pointercancel', end, sig);
+  pad.addEventListener('keydown', e => {
+    if((e.key === ' ' || e.key === 'Enter') && !e.repeat){ e.preventDefault(); begin(); }
+  }, sig);
+  pad.addEventListener('keyup', e => {
+    if(e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); end(); }
+  }, sig);
+  pad.addEventListener('contextmenu', e => e.preventDefault(), sig);
+}
+
+/* ---------- clicks ---------- */
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-go]');
+  if(!t) return;
+  const go = t.dataset.go;
+  const stash = () => {
+    const n1 = $('n1'), n2 = $('n2');
+    if(n1) NAMES.p1 = n1.value.trim() || DEFAULTS.p1;
+    if(n2) NAMES.p2 = n2.value.trim() || DEFAULTS.p2;
+  };
+  if(go === 'sound'){ OPT.sound = !OPT.sound; stash(); if(OPT.sound) SFX.pass(); render(); return; }
+  if(go === 'rounds'){
+    ROUNDS = ROUND_OPTS[(ROUND_OPTS.indexOf(ROUNDS) + 1) % ROUND_OPTS.length];
+    stash(); render(); return;
+  }
+  if(go === 'start'){ actx(); startGame(); return; }
+  if(go === 'toSet'){ actx(); S.phase = 'set'; render(); return; }
+  if(go === 'toMatch'){ actx(); S.phase = 'match'; render(); return; }
+  if(go === 'next'){ nextRound(); return; }
+  if(go === 'again'){ runItBack(); return; }
+  if(go === 'home'){ S = null; render(); return; }
+});
+
+render();
+</script>
+</body>
+</html>
